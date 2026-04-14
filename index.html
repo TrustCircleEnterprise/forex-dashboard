@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
 .glow{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,107,255,0.08) 0%,transparent 70%);top:-200px;right:-100px;pointer-events:none;z-index:0;}
-.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1;}
 header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
 .logo{display:flex;align-items:center;gap:12px;}
 .logo-icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
@@ -21,42 +21,37 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .nav-btn.active{background:var(--accent);color:white;}
 .nav-btn:hover:not(.active){color:var(--text);background:var(--surface2);}
 .tab{display:none;}.tab.active{display:block;}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-@media(max-width:700px){.grid3,.grid2{grid-template-columns:1fr;}}
+@media(max-width:600px){.grid2{grid-template-columns:1fr;}}
 .card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:16px;}
 .card-title{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:1rem;}
-.pair-card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;}
+.pair-card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:1.5rem;transition:border-color 0.3s,background 0.3s;}
 .pair-name{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:8px;}
-.pair-name.gbpjpy{color:#60a5fa;}.pair-name.gbpusd{color:#a78bfa;}.pair-name.xauusd{color:var(--gold);}
-.price-big{font-size:28px;font-weight:800;letter-spacing:-0.03em;font-family:'DM Mono',monospace;margin-bottom:4px;}
-.signal-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:12px;}
+.pair-name.gbpjpy{color:#60a5fa;}.pair-name.xauusd{color:var(--gold);}
+.price-big{font-size:32px;font-weight:800;letter-spacing:-0.03em;font-family:'DM Mono',monospace;margin-bottom:8px;}
+.signal-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:14px;}
 .badge-long{background:var(--green-bg);color:var(--green);border:0.5px solid var(--green-border);}
 .badge-short{background:var(--red-bg);color:var(--red);border:0.5px solid var(--red-border);}
 .badge-wait{background:var(--surface2);color:var(--muted);border:0.5px solid var(--border);}
 .badge-loading{background:var(--amber-bg);color:var(--amber);border:0.5px solid rgba(245,158,11,0.3);}
-.mini-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-.mini-metric{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:8px;padding:8px;}
-.mini-label{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:3px;}
-.mini-val{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;}
+.mini-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.mini-metric{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:8px;padding:10px;}
+.mini-label{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px;}
+.mini-val{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;}
 .check-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
 .check-row:last-child{border-bottom:none;}
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.dot-green{background:var(--green);}.dot-red{background:var(--red);}.dot-gray{background:var(--muted);}
+.dot-green{background:var(--green);}.dot-red{background:var(--red);}
 .refresh-btn{background:var(--accent);border:none;border-radius:8px;color:white;padding:8px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;}
 .refresh-btn:hover{background:#9080ff;}
 .last-update{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
-.alert-setup{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
-.alert-title{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
-.alert-text{font-size:13px;color:var(--muted);line-height:1.6;}
 .field-label{font-size:11px;color:var(--muted);margin-bottom:5px;font-family:'DM Mono',monospace;}
-input,select{width:100%;padding:9px 12px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Mono',monospace;outline:none;}
-input:focus,select:focus{border-color:var(--accent);}
+input{width:100%;padding:9px 12px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Mono',monospace;outline:none;}
+input:focus{border-color:var(--accent);}
 input::placeholder{color:var(--muted);}
 .field{margin-bottom:12px;}
 .btn-save{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;}
 .btn-save:hover{background:#9080ff;}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
 .how-step{display:flex;gap:16px;margin-bottom:20px;}
 .step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;}
 .step-content h3{font-size:15px;font-weight:700;margin-bottom:4px;}
@@ -64,13 +59,13 @@ input::placeholder{color:var(--muted);}
 .rule-card{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
 .rule-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--accent2);}
 .rule-text{font-size:13px;color:var(--muted);line-height:1.6;}
-.status-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;}
-.spinning{animation:spin 1s linear infinite;}
-@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.alert-box{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
+.alert-title{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
+.alert-text{font-size:13px;color:var(--muted);line-height:1.6;}
+.loading-msg{text-align:center;padding:2rem;color:var(--muted);font-size:13px;font-family:'DM Mono',monospace;}
 </style>
 </head>
 <body>
-<h2 class="sr-only">Makisha's live forex signal dashboard for GBP/JPY, GBP/USD, and XAU/USD</h2>
 <div class="glow"></div>
 <div class="container">
   <header>
@@ -78,24 +73,24 @@ input::placeholder{color:var(--muted);}
       <div class="logo-icon">&#9650;</div>
       <div>
         <div class="logo-text">Makisha's Forex Dashboard</div>
-        <div class="logo-sub">Live signals &middot; GBP/JPY &middot; GBP/USD &middot; XAU/USD</div>
+        <div class="logo-sub">Live signals &middot; GBP/JPY &middot; XAU/USD &middot; 1H</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span class="last-update" id="last-update">Not yet loaded</span>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span class="last-update" id="last-update">Loading...</span>
       <button class="refresh-btn" onclick="loadAll()">&#8635; Refresh</button>
     </div>
   </header>
 
   <div class="nav">
     <button class="nav-btn active" onclick="switchTab('signals',this)">Live Signals</button>
-    <button class="nav-btn" onclick="switchTab('alerts',this)">Alert Setup</button>
+    <button class="nav-btn" onclick="switchTab('alerts',this)">S/R Levels</button>
     <button class="nav-btn" onclick="switchTab('howto',this)">How to Use</button>
     <button class="nav-btn" onclick="switchTab('rules',this)">Strategy Rules</button>
   </div>
 
   <div id="tab-signals" class="tab active">
-    <div class="grid3" id="pair-grid">
+    <div class="grid2">
       <div class="pair-card" id="card-GBPJPY">
         <div class="pair-name gbpjpy">GBP/JPY</div>
         <div class="price-big" id="price-GBPJPY">—</div>
@@ -106,19 +101,7 @@ input::placeholder{color:var(--muted);}
           <div class="mini-metric"><div class="mini-label">Stop loss</div><div class="mini-val" id="sl-GBPJPY">—</div></div>
           <div class="mini-metric"><div class="mini-label">Take profit</div><div class="mini-val" id="tp-GBPJPY">—</div></div>
         </div>
-        <div style="margin-top:12px;" id="checks-GBPJPY"></div>
-      </div>
-      <div class="pair-card" id="card-GBPUSD">
-        <div class="pair-name gbpusd">GBP/USD</div>
-        <div class="price-big" id="price-GBPUSD">—</div>
-        <div><span class="signal-badge badge-loading" id="badge-GBPUSD">Loading...</span></div>
-        <div class="mini-metrics">
-          <div class="mini-metric"><div class="mini-label">20 EMA</div><div class="mini-val" id="ema20-GBPUSD">—</div></div>
-          <div class="mini-metric"><div class="mini-label">50 EMA</div><div class="mini-val" id="ema50-GBPUSD">—</div></div>
-          <div class="mini-metric"><div class="mini-label">Stop loss</div><div class="mini-val" id="sl-GBPUSD">—</div></div>
-          <div class="mini-metric"><div class="mini-label">Take profit</div><div class="mini-val" id="tp-GBPUSD">—</div></div>
-        </div>
-        <div style="margin-top:12px;" id="checks-GBPUSD"></div>
+        <div id="checks-GBPJPY"></div>
       </div>
       <div class="pair-card" id="card-XAUUSD">
         <div class="pair-name xauusd">XAU/USD (Gold)</div>
@@ -130,14 +113,12 @@ input::placeholder{color:var(--muted);}
           <div class="mini-metric"><div class="mini-label">Stop loss</div><div class="mini-val" id="sl-XAUUSD">—</div></div>
           <div class="mini-metric"><div class="mini-label">Take profit</div><div class="mini-val" id="tp-XAUUSD">—</div></div>
         </div>
-        <div style="margin-top:12px;" id="checks-XAUUSD"></div>
+        <div id="checks-XAUUSD"></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">How signals work</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.8;">
-        Signals auto-refresh every 15 minutes using live 1H data. A <span style="color:var(--green);font-weight:700;">LONG</span> or <span style="color:var(--red);font-weight:700;">SHORT</span> signal only fires when all 4 conditions are met: EMA alignment, price location, S/R proximity, and 2:1 R:R. If any condition fails, the signal shows <span style="color:var(--muted);font-weight:700;">WAIT</span>. Note: S/R levels must be set manually in Alert Setup since they are subjective to your analysis.
-      </div>
+      <div class="card-title">Signal info</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;">Signals use live 1H data. <span style="color:var(--green);font-weight:700;">LONG</span> or <span style="color:var(--red);font-weight:700;">SHORT</span> only fires when all 4 conditions are met. <span style="color:var(--muted);font-weight:700;">WAIT</span> means stay out. Set your S/R levels in the S/R Levels tab to get full signals with SL and TP.</div>
     </div>
   </div>
 
@@ -145,46 +126,38 @@ input::placeholder{color:var(--muted);}
     <div class="grid2">
       <div>
         <div class="card">
-          <div class="card-title">Your S/R levels (required for signals)</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Enter your key support and resistance levels from TradingView. These are used to calculate R:R and entry zones.</p>
-          <div style="margin-bottom:16px;">
-            <div style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:8px;font-family:'DM Mono',monospace;">GBP/JPY</div>
-            <div class="field"><div class="field-label">Support</div><input type="number" id="sr-support-GBPJPY" placeholder="e.g. 213.00" step="0.01"></div>
-            <div class="field"><div class="field-label">Resistance</div><input type="number" id="sr-resistance-GBPJPY" placeholder="e.g. 217.00" step="0.01"></div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:8px;font-family:'DM Mono',monospace;">GBP/USD</div>
-            <div class="field"><div class="field-label">Support</div><input type="number" id="sr-support-GBPUSD" placeholder="e.g. 1.26000" step="0.00001"></div>
-            <div class="field"><div class="field-label">Resistance</div><input type="number" id="sr-resistance-GBPUSD" placeholder="e.g. 1.28000" step="0.00001"></div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;font-family:'DM Mono',monospace;">XAU/USD (Gold)</div>
-            <div class="field"><div class="field-label">Support</div><input type="number" id="sr-support-XAUUSD" placeholder="e.g. 3200.00" step="0.01"></div>
-            <div class="field"><div class="field-label">Resistance</div><input type="number" id="sr-resistance-XAUUSD" placeholder="e.g. 3280.00" step="0.01"></div>
-          </div>
-          <button class="btn-save" onclick="saveSR()">Save S/R Levels & Refresh Signals</button>
+          <div class="card-title">GBP/JPY Support & Resistance</div>
+          <div class="field"><div class="field-label">Support level</div><input type="number" id="sr-support-GBPJPY" placeholder="e.g. 213.00" step="0.01"></div>
+          <div class="field"><div class="field-label">Resistance level</div><input type="number" id="sr-resistance-GBPJPY" placeholder="e.g. 217.00" step="0.01"></div>
         </div>
+        <div class="card">
+          <div class="card-title">XAU/USD Support & Resistance</div>
+          <div class="field"><div class="field-label">Support level</div><input type="number" id="sr-support-XAUUSD" placeholder="e.g. 3200.00" step="0.01"></div>
+          <div class="field"><div class="field-label">Resistance level</div><input type="number" id="sr-resistance-XAUUSD" placeholder="e.g. 3280.00" step="0.01"></div>
+        </div>
+        <button class="btn-save" onclick="saveSR()">Save & Refresh Signals</button>
       </div>
       <div>
         <div class="card">
-          <div class="card-title">Email & SMS alerts</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">When all signal conditions are met, you'll get an email and text. Set up in Make.com using the details below.</p>
-          <div class="alert-setup">
+          <div class="card-title">SMS & Email alerts via Make.com</div>
+          <div class="alert-box">
             <div class="alert-title">Your Verizon SMS address</div>
-            <div class="alert-text">Your 10-digit number + <span style="color:var(--accent2);font-family:'DM Mono',monospace;">@vzwpix.com</span><br>Example: <span style="color:var(--accent2);font-family:'DM Mono',monospace;">4045551234@vzwpix.com</span></div>
+            <div class="alert-text">Format: <span style="color:var(--accent2);font-family:'DM Mono',monospace;">yournumber@vzwpix.com</span><br>Example: <span style="color:var(--accent2);font-family:'DM Mono',monospace;">4045551234@vzwpix.com</span></div>
           </div>
-          <div class="alert-setup">
-            <div class="alert-title">Make.com alert message</div>
+          <div class="alert-box">
+            <div class="alert-title">Alert message template</div>
             <div class="alert-text" style="font-family:'DM Mono',monospace;font-size:12px;">
-              Subject: FOREX ALERT - [PAIR] [DIRECTION]<br>
-              Body: [PAIR] [DIRECTION] signal on 1H<br>
-              Entry: [PRICE] | SL: [SL] | TP: [TP]<br>
-              Check your dashboard now.
+              FOREX ALERT<br>
+              Pair: [PAIR]<br>
+              Signal: [LONG/SHORT]<br>
+              Entry: [PRICE]<br>
+              SL: [SL] | TP: [TP]<br>
+              Check dashboard now.
             </div>
           </div>
-          <div class="alert-setup">
-            <div class="alert-title">Make.com webhook URL</div>
-            <div class="alert-text">Set Make.com to call your dashboard API every 15 minutes. When signal = LONG or SHORT, trigger Gmail to send to your email + Verizon SMS address.</div>
+          <div class="alert-box">
+            <div class="alert-title">How alerts work</div>
+            <div class="alert-text">Make.com checks your pairs every 15 min via the Twelve Data API. When a LONG or SHORT fires, it sends an email to your Gmail and a text to your Verizon number. We'll finish setting this up in Make.com next.</div>
           </div>
         </div>
       </div>
@@ -196,16 +169,16 @@ input::placeholder{color:var(--muted);}
       <div>
         <div class="card">
           <div class="card-title">Daily routine</div>
-          <div class="how-step"><div class="step-num">1</div><div class="step-content"><h3>Open this dashboard</h3><p>Bookmark this page. Open it each morning. Live prices and EMA signals load automatically.</p></div></div>
-          <div class="how-step"><div class="step-num">2</div><div class="step-content"><h3>Check your S/R levels</h3><p>Open TradingView, mark your key support and resistance levels, enter them in the Alert Setup tab. Update these weekly or when price breaks through.</p></div></div>
-          <div class="how-step"><div class="step-num">3</div><div class="step-content"><h3>Watch for green signals</h3><p>When a pair shows LONG or SHORT, open TradingView to visually confirm the setup. If it looks good, take the trade using the SL and TP shown.</p></div></div>
-          <div class="how-step"><div class="step-num">4</div><div class="step-content"><h3>Get alerted automatically</h3><p>Once Make.com is configured, you'll get a text and email the moment any pair fires a signal. You don't need to watch the dashboard all day.</p></div></div>
-          <div class="how-step"><div class="step-num">5</div><div class="step-content"><h3>Manage the trade</h3><p>Move stop to breakeven at 1:1. Take profit at resistance (longs) or support (shorts). Always exit before major news.</p></div></div>
+          <div class="how-step"><div class="step-num">1</div><div class="step-content"><h3>Open this dashboard</h3><p>Bookmark this page. Open it each morning. Live prices and signals load automatically.</p></div></div>
+          <div class="how-step"><div class="step-num">2</div><div class="step-content"><h3>Set your S/R levels</h3><p>Open TradingView, mark key support and resistance on your chart, then enter them in the S/R Levels tab. Update weekly or when price breaks through.</p></div></div>
+          <div class="how-step"><div class="step-num">3</div><div class="step-content"><h3>Wait for a signal</h3><p>When a pair shows LONG or SHORT, open TradingView to visually confirm. If it looks good, take the trade using the SL and TP shown.</p></div></div>
+          <div class="how-step"><div class="step-num">4</div><div class="step-content"><h3>Get alerted automatically</h3><p>Once Make.com is configured you'll get a text and email the moment a signal fires. No need to watch the dashboard all day.</p></div></div>
+          <div class="how-step"><div class="step-num">5</div><div class="step-content"><h3>Manage the trade</h3><p>Move stop to breakeven at 1:1. Take profit at your target. Exit before major news (NFP, BOE, Fed).</p></div></div>
         </div>
       </div>
       <div>
         <div class="card">
-          <div class="card-title">Best times to trade (EST)</div>
+          <div class="card-title">Best trading times (EST)</div>
           <div style="font-size:13px;font-family:'DM Mono',monospace;display:flex;flex-direction:column;gap:4px;">
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);"><span style="color:var(--muted);">London open</span><span style="color:var(--green);">3am - 5am</span></div>
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);"><span style="color:var(--muted);">London/NY overlap</span><span style="color:var(--green);">8am - 12pm</span></div>
@@ -214,10 +187,9 @@ input::placeholder{color:var(--muted);}
           </div>
         </div>
         <div class="card">
-          <div class="card-title">Your pairs at a glance</div>
-          <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">GBP/JPY</div><div style="font-size:12px;color:var(--muted);">Most volatile. Wide stops. Best during London/NY sessions.</div></div>
-          <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:4px;">GBP/USD</div><div style="font-size:12px;color:var(--muted);">Cleanest trends. Best pair for EMA strategy.</div></div>
-          <div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">XAU/USD</div><div style="font-size:12px;color:var(--muted);">Explosive moves. Very news sensitive. Use 4H for cleaner signals.</div></div>
+          <div class="card-title">Your pairs</div>
+          <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">GBP/JPY</div><div style="font-size:12px;color:var(--muted);">Most volatile. Wide stops needed. Best during London and NY sessions. High pip value — great for small accounts.</div></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">XAU/USD (Gold)</div><div style="font-size:12px;color:var(--muted);">Explosive moves. Very news sensitive. Use 4H for cleaner signals. Always check economic calendar before entering.</div></div>
         </div>
       </div>
     </div>
@@ -228,7 +200,7 @@ input::placeholder{color:var(--muted);}
       <div>
         <div class="card">
           <div class="card-title">Entry rules — all 4 must be true</div>
-          <div class="rule-card"><div class="rule-title">Rule 1 — EMA alignment</div><div class="rule-text">20 EMA above 50 EMA = long bias. 20 EMA below 50 EMA = short bias. Flat/tangled = no trade.</div></div>
+          <div class="rule-card"><div class="rule-title">Rule 1 — EMA alignment</div><div class="rule-text">20 EMA above 50 EMA = long bias. Below = short bias. Flat or tangled = no trade.</div></div>
           <div class="rule-card"><div class="rule-title">Rule 2 — Price location</div><div class="rule-text">Long: price above 20 EMA. Short: price below 20 EMA. Never trade against EMA direction.</div></div>
           <div class="rule-card"><div class="rule-title">Rule 3 — S/R confirmation</div><div class="rule-text">Long: price near support. Short: price near resistance. This is your entry trigger.</div></div>
           <div class="rule-card"><div class="rule-title">Rule 4 — Minimum 2:1 R:R</div><div class="rule-text">TP must be at least 2x the SL distance. Below 2:1 = skip it, no exceptions.</div></div>
@@ -237,10 +209,20 @@ input::placeholder{color:var(--muted);}
       <div>
         <div class="card">
           <div class="card-title">Risk management</div>
-          <div class="rule-card"><div class="rule-title">Risk 4% per trade</div><div class="rule-text">On $400 = $16 max risk per trade. Never exceed this.</div></div>
+          <div class="rule-card"><div class="rule-title">Risk 4% per trade</div><div class="rule-text">On $400 = $16 max per trade. Never exceed this no matter what.</div></div>
           <div class="rule-card"><div class="rule-title">Stop loss placement</div><div class="rule-text">5 pips below support (longs) or above resistance (shorts). Never widen your stop.</div></div>
-          <div class="rule-card"><div class="rule-title">Breakeven rule</div><div class="rule-text">Move stop to entry once price moves 1:1 in your favor. Risk-free trade.</div></div>
+          <div class="rule-card"><div class="rule-title">Breakeven rule</div><div class="rule-text">Move stop to entry once price moves 1:1 in your favor. Risk-free trade from there.</div></div>
           <div class="rule-card"><div class="rule-title">Max 2 trades per day</div><div class="rule-text">Stop after 2 losses in one day. Quality over quantity always.</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">When NOT to trade</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>30 mins before/after NFP, CPI, BOE, Fed</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>EMAs flat or tangled</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>R:R below 2:1</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>Asian session (8pm - 2am EST)</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;"><div class="dot dot-red"></div>After 2 losing trades in one day</div>
+          </div>
         </div>
       </div>
     </div>
@@ -248,9 +230,9 @@ input::placeholder{color:var(--muted);}
 </div>
 
 <script>
-const API_KEY = '6609b2a381b14d95b39955a7fbb439cf;
-const PAIRS = ['GBPJPY','GBPUSD','XAUUSD'];
-const SYMBOLS = {GBPJPY:'GBP/JPY',GBPUSD:'GBP/USD',XAUUSD:'XAU/USD'};
+const API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
+const PAIRS = ['GBPJPY','XAUUSD'];
+const SYMBOLS = {GBPJPY:'GBP/JPY',XAUUSD:'XAU/USD'};
 
 function switchTab(name,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -262,8 +244,14 @@ function switchTab(name,btn){
 function fmt(val,pair){
   if(!val||isNaN(val))return'—';
   if(pair==='XAUUSD')return parseFloat(val).toFixed(2);
-  if(pair==='GBPJPY')return parseFloat(val).toFixed(3);
-  return parseFloat(val).toFixed(5);
+  return parseFloat(val).toFixed(3);
+}
+
+function calcEMA(prices,period){
+  const k=2/(period+1);
+  let ema=prices.slice(0,period).reduce((a,b)=>a+b,0)/period;
+  for(let i=period;i<prices.length;i++)ema=prices[i]*k+ema*(1-k);
+  return ema;
 }
 
 function getSR(pair){
@@ -281,7 +269,7 @@ function saveSR(){
     if(r)localStorage.setItem('resistance-'+pair,r);
   });
   loadAll();
-  switchTab('signals',document.querySelector('.nav-btn'));
+  switchTab('signals',document.querySelectorAll('.nav-btn')[0]);
 }
 
 function loadSRInputs(){
@@ -296,58 +284,53 @@ function loadSRInputs(){
 async function fetchPairData(pair){
   const symbol=SYMBOLS[pair];
   try{
-    const [priceRes,ema20Res,ema50Res]=await Promise.all([
-      fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=${API_KEY}`),
-      fetch(`https://api.twelvedata.com/ema?symbol=${symbol}&interval=1h&time_period=20&outputsize=1&apikey=${API_KEY}`),
-      fetch(`https://api.twelvedata.com/ema?symbol=${symbol}&interval=1h&time_period=50&outputsize=1&apikey=${API_KEY}`)
-    ]);
-    const priceData=await priceRes.json();
-    const ema20Data=await ema20Res.json();
-    const ema50Data=await ema50Res.json();
-    return{
-      price:parseFloat(priceData.price),
-      ema20:parseFloat(ema20Data.values?.[0]?.ema),
-      ema50:parseFloat(ema50Data.values?.[0]?.ema)
-    };
+    const res=await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=1h&outputsize=60&apikey=${API_KEY}`);
+    const data=await res.json();
+    if(!data.values||data.values.length<51)return null;
+    const closes=data.values.map(v=>parseFloat(v.close)).reverse();
+    const price=closes[closes.length-1];
+    const ema20=calcEMA(closes,20);
+    const ema50=calcEMA(closes,50);
+    return{price,ema20,ema50};
   }catch(e){return null;}
 }
 
 function analyzeSignal(pair,price,ema20,ema50){
   const{support,resistance}=getSR(pair);
-  const pipSize=pair==='GBPJPY'?0.01:pair==='XAUUSD'?0.1:0.0001;
+  const pipSize=pair==='XAUUSD'?0.5:0.01;
   const maLong=ema20>ema50,maShort=ema20<ema50;
   const priceAboveEma20=price>ema20,priceBelowEma20=price<ema20;
-  const nearSupport=support&&Math.abs(price-support)/price<0.006;
-  const nearResistance=resistance&&Math.abs(price-resistance)/price<0.006;
+  const nearSupport=support&&Math.abs(price-support)/price<0.007;
+  const nearResistance=resistance&&Math.abs(price-resistance)/price<0.007;
   let direction='wait',checks=[],score=0;
 
-  if(maLong){checks.push({label:'20 EMA above 50 EMA — bullish',pass:true});score++;}
-  else if(maShort){checks.push({label:'20 EMA below 50 EMA — bearish',pass:true});score++;}
-  else{checks.push({label:'EMAs flat — no trend',pass:false});}
+  if(maLong){checks.push({label:'20 EMA above 50 EMA — bullish trend',pass:true});score++;}
+  else if(maShort){checks.push({label:'20 EMA below 50 EMA — bearish trend',pass:true});score++;}
+  else{checks.push({label:'EMAs flat — no clear trend',pass:false});}
 
-  if(maLong&&priceAboveEma20){checks.push({label:'Price above 20 EMA — long bias',pass:true});score++;direction='long';}
-  else if(maShort&&priceBelowEma20){checks.push({label:'Price below 20 EMA — short bias',pass:true});score++;direction='short';}
-  else{checks.push({label:'Price not aligned with EMA',pass:false});}
+  if(maLong&&priceAboveEma20){checks.push({label:'Price above 20 EMA — long bias confirmed',pass:true});score++;direction='long';}
+  else if(maShort&&priceBelowEma20){checks.push({label:'Price below 20 EMA — short bias confirmed',pass:true});score++;direction='short';}
+  else{checks.push({label:'Price not aligned with EMA direction',pass:false});}
 
   if(!support||!resistance){
-    checks.push({label:'Set S/R in Alert Setup tab',pass:false});
-  } else if(direction==='long'&&nearSupport){
-    checks.push({label:'Near support — long entry zone',pass:true});score++;
-  } else if(direction==='short'&&nearResistance){
-    checks.push({label:'Near resistance — short entry zone',pass:true});score++;
-  } else if(direction==='long'){
-    checks.push({label:'Not near support — wait',pass:false});
-  } else if(direction==='short'){
-    checks.push({label:'Not near resistance — wait',pass:false});
+    checks.push({label:'Set S/R levels in S/R Levels tab',pass:false});
+  }else if(direction==='long'&&nearSupport){
+    checks.push({label:'Near support — valid long entry zone',pass:true});score++;
+  }else if(direction==='short'&&nearResistance){
+    checks.push({label:'Near resistance — valid short entry zone',pass:true});score++;
+  }else if(direction==='long'){
+    checks.push({label:'Not near support — wait for pullback',pass:false});
+  }else if(direction==='short'){
+    checks.push({label:'Not near resistance — wait for push up',pass:false});
   }
 
   let rr=0,sl=null,tp=null;
   if(support&&resistance){
     const distSL=direction==='long'?Math.abs(price-support):Math.abs(resistance-price);
     const distTP=direction==='long'?Math.abs(resistance-price):Math.abs(price-support);
-    rr=distTP/distSL;
-    if(rr>=2){checks.push({label:'R:R '+rr.toFixed(1)+':1 — valid',pass:true});score++;}
-    else{checks.push({label:'R:R '+rr.toFixed(1)+':1 — too low',pass:false});direction='wait';}
+    rr=distSL>0?distTP/distSL:0;
+    if(rr>=2){checks.push({label:'R:R '+rr.toFixed(1)+':1 — valid setup',pass:true});score++;}
+    else if(rr>0){checks.push({label:'R:R '+rr.toFixed(1)+':1 — below 2:1 minimum',pass:false});direction='wait';}
     sl=direction==='long'?support-pipSize*5:resistance+pipSize*5;
     tp=direction==='long'?resistance-pipSize*5:support+pipSize*5;
   }
@@ -359,11 +342,11 @@ function analyzeSignal(pair,price,ema20,ema50){
 function updateCard(pair,price,ema20,ema50){
   const{direction,checks,sl,tp}=analyzeSignal(pair,price,ema20,ema50);
   const card=document.getElementById('card-'+pair);
-  card.style.borderColor=direction==='long'?'rgba(34,197,94,0.3)':direction==='short'?'rgba(239,68,68,0.3)':'rgba(255,255,255,0.07)';
+  card.style.borderColor=direction==='long'?'rgba(34,197,94,0.4)':direction==='short'?'rgba(239,68,68,0.4)':'rgba(255,255,255,0.07)';
   card.style.background=direction==='long'?'rgba(34,197,94,0.05)':direction==='short'?'rgba(239,68,68,0.05)':'var(--surface)';
   document.getElementById('price-'+pair).textContent=fmt(price,pair);
   const badge=document.getElementById('badge-'+pair);
-  badge.textContent=direction==='long'?'LONG — BUY':direction==='short'?'SHORT — SELL':'WAIT';
+  badge.textContent=direction==='long'?'LONG — BUY':direction==='short'?'SHORT — SELL':'WAIT — NO TRADE';
   badge.className='signal-badge '+(direction==='long'?'badge-long':direction==='short'?'badge-short':'badge-wait');
   document.getElementById('ema20-'+pair).textContent=fmt(ema20,pair);
   document.getElementById('ema50-'+pair).textContent=fmt(ema50,pair);
@@ -380,11 +363,12 @@ async function loadAll(){
     const data=await fetchPairData(pair);
     if(data&&data.price&&data.ema20&&data.ema50){
       updateCard(pair,data.price,data.ema20,data.ema50);
-    } else {
-      document.getElementById('badge-'+pair).textContent='API limit reached — try later';
+    }else{
+      document.getElementById('badge-'+pair).textContent='API limit — try again shortly';
       document.getElementById('badge-'+pair).className='signal-badge badge-loading';
+      document.getElementById('price-'+pair).textContent='—';
     }
-    await new Promise(r=>setTimeout(r,500));
+    await new Promise(r=>setTimeout(r,10000));
   }
   const now=new Date();
   document.getElementById('last-update').textContent='Updated '+now.toLocaleTimeString();
@@ -392,7 +376,7 @@ async function loadAll(){
 
 loadSRInputs();
 loadAll();
-setInterval(loadAll, 15*60*1000);
+setInterval(loadAll,15*60*1000);
 </script>
 </body>
 </html>
