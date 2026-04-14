@@ -10,14 +10,14 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
 .glow{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,107,255,0.08) 0%,transparent 70%);top:-200px;right:-100px;pointer-events:none;z-index:0;}
-.container{max-width:900px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1;}
+.container{max-width:1000px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1;}
 header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
 .logo{display:flex;align-items:center;gap:12px;}
 .logo-icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .logo-text{font-size:20px;font-weight:800;letter-spacing:-0.02em;}
 .logo-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
-.nav{display:flex;gap:4px;margin-bottom:2rem;background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:4px;width:fit-content;}
-.nav-btn{padding:8px 20px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.nav{display:flex;gap:4px;margin-bottom:2rem;background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:4px;flex-wrap:wrap;}
+.nav-btn{padding:8px 18px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;}
 .nav-btn.active{background:var(--accent);color:white;}
 .nav-btn:hover:not(.active){color:var(--text);background:var(--surface2);}
 .tab{display:none;}.tab.active{display:block;}
@@ -25,7 +25,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 @media(max-width:600px){.grid2{grid-template-columns:1fr;}}
 .card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:16px;}
 .card-title{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:1rem;}
-.pair-card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:1.5rem;transition:border-color 0.3s,background 0.3s;}
+.pair-card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:1.5rem;transition:border-color 0.3s,background 0.3s;margin-bottom:16px;}
 .pair-name{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:8px;}
 .pair-name.gbpjpy{color:#60a5fa;}.pair-name.xauusd{color:var(--gold);}
 .price-big{font-size:32px;font-weight:800;letter-spacing:-0.03em;font-family:'DM Mono',monospace;margin-bottom:8px;}
@@ -34,35 +34,38 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .badge-short{background:var(--red-bg);color:var(--red);border:0.5px solid var(--red-border);}
 .badge-wait{background:var(--surface2);color:var(--muted);border:0.5px solid var(--border);}
 .badge-loading{background:var(--amber-bg);color:var(--amber);border:0.5px solid rgba(245,158,11,0.3);}
-.mini-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.mini-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
 .mini-metric{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:8px;padding:10px;}
 .mini-label{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px;}
-.mini-val{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;}
+.mini-val{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;}
 .check-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
 .check-row:last-child{border-bottom:none;}
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .dot-green{background:var(--green);}.dot-red{background:var(--red);}
-.refresh-btn{background:var(--accent);border:none;border-radius:8px;color:white;padding:8px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.refresh-btn{background:var(--accent);border:none;border-radius:8px;color:white;padding:8px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
 .refresh-btn:hover{background:#9080ff;}
 .last-update{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
-.field-label{font-size:11px;color:var(--muted);margin-bottom:5px;font-family:'DM Mono',monospace;}
-input{width:100%;padding:9px 12px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Mono',monospace;outline:none;}
-input:focus{border-color:var(--accent);}
-input::placeholder{color:var(--muted);}
-.field{margin-bottom:12px;}
-.btn-save{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;}
-.btn-save:hover{background:#9080ff;}
+.rule-card{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
+.rule-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--accent2);}
+.rule-text{font-size:13px;color:var(--muted);line-height:1.6;}
 .how-step{display:flex;gap:16px;margin-bottom:20px;}
 .step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;}
 .step-content h3{font-size:15px;font-weight:700;margin-bottom:4px;}
 .step-content p{font-size:13px;color:var(--muted);line-height:1.7;}
-.rule-card{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
-.rule-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--accent2);}
-.rule-text{font-size:13px;color:var(--muted);line-height:1.6;}
-.alert-box{background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
-.alert-title{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
-.alert-text{font-size:13px;color:var(--muted);line-height:1.6;}
-.loading-msg{text-align:center;padding:2rem;color:var(--muted);font-size:13px;font-family:'DM Mono',monospace;}
+.journal-table{width:100%;border-collapse:collapse;font-size:12px;font-family:'DM Mono',monospace;}
+.journal-table th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;padding:8px 12px;text-align:left;border-bottom:0.5px solid var(--border);}
+.journal-table td{padding:10px 12px;border-bottom:0.5px solid var(--border);vertical-align:middle;}
+.journal-table tr:last-child td{border-bottom:none;}
+.status-win{color:var(--green);font-weight:700;}
+.status-loss{color:var(--red);font-weight:700;}
+.status-open{color:var(--amber);font-weight:700;}
+.pnl-pos{color:var(--green);}.pnl-neg{color:var(--red);}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr;}.mini-metrics{grid-template-columns:1fr 1fr;}}
+.stat-card{background:var(--surface2);border-radius:10px;padding:1rem;}
+.stat-label{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.stat-val{font-size:22px;font-weight:800;}
+.clear-btn{background:transparent;border:0.5px solid var(--red-border);color:var(--red);border-radius:8px;padding:6px 14px;font-family:'Syne',sans-serif;font-size:12px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -73,7 +76,7 @@ input::placeholder{color:var(--muted);}
       <div class="logo-icon">&#9650;</div>
       <div>
         <div class="logo-text">Makisha's Forex Dashboard</div>
-        <div class="logo-sub">Live signals &middot; GBP/JPY &middot; XAU/USD &middot; 1H</div>
+        <div class="logo-sub">Live signals &middot; Auto S/R &middot; GBP/JPY &middot; XAU/USD</div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -81,14 +84,12 @@ input::placeholder{color:var(--muted);}
       <button class="refresh-btn" onclick="loadAll()">&#8635; Refresh</button>
     </div>
   </header>
-
   <div class="nav">
     <button class="nav-btn active" onclick="switchTab('signals',this)">Live Signals</button>
-    <button class="nav-btn" onclick="switchTab('alerts',this)">S/R Levels</button>
+    <button class="nav-btn" onclick="switchTab('journal',this)">Trade Journal</button>
     <button class="nav-btn" onclick="switchTab('howto',this)">How to Use</button>
     <button class="nav-btn" onclick="switchTab('rules',this)">Strategy Rules</button>
   </div>
-
   <div id="tab-signals" class="tab active">
     <div class="grid2">
       <div class="pair-card" id="card-GBPJPY">
@@ -98,6 +99,12 @@ input::placeholder{color:var(--muted);}
         <div class="mini-metrics">
           <div class="mini-metric"><div class="mini-label">20 EMA</div><div class="mini-val" id="ema20-GBPJPY">—</div></div>
           <div class="mini-metric"><div class="mini-label">50 EMA</div><div class="mini-val" id="ema50-GBPJPY">—</div></div>
+          <div class="mini-metric"><div class="mini-label">Price vs EMA</div><div class="mini-val" id="pvsema-GBPJPY">—</div></div>
+          <div class="mini-metric"><div class="mini-label">Support (auto)</div><div class="mini-val" id="support-GBPJPY">—</div></div>
+          <div class="mini-metric"><div class="mini-label">Resistance (auto)</div><div class="mini-val" id="resistance-GBPJPY">—</div></div>
+          <div class="mini-metric"><div class="mini-label">R:R ratio</div><div class="mini-val" id="rr-GBPJPY">—</div></div>
+        </div>
+        <div class="mini-metrics" style="grid-template-columns:1fr 1fr;">
           <div class="mini-metric"><div class="mini-label">Stop loss</div><div class="mini-val" id="sl-GBPJPY">—</div></div>
           <div class="mini-metric"><div class="mini-label">Take profit</div><div class="mini-val" id="tp-GBPJPY">—</div></div>
         </div>
@@ -110,6 +117,12 @@ input::placeholder{color:var(--muted);}
         <div class="mini-metrics">
           <div class="mini-metric"><div class="mini-label">20 EMA</div><div class="mini-val" id="ema20-XAUUSD">—</div></div>
           <div class="mini-metric"><div class="mini-label">50 EMA</div><div class="mini-val" id="ema50-XAUUSD">—</div></div>
+          <div class="mini-metric"><div class="mini-label">Price vs EMA</div><div class="mini-val" id="pvsema-XAUUSD">—</div></div>
+          <div class="mini-metric"><div class="mini-label">Support (auto)</div><div class="mini-val" id="support-XAUUSD">—</div></div>
+          <div class="mini-metric"><div class="mini-label">Resistance (auto)</div><div class="mini-val" id="resistance-XAUUSD">—</div></div>
+          <div class="mini-metric"><div class="mini-label">R:R ratio</div><div class="mini-val" id="rr-XAUUSD">—</div></div>
+        </div>
+        <div class="mini-metrics" style="grid-template-columns:1fr 1fr;">
           <div class="mini-metric"><div class="mini-label">Stop loss</div><div class="mini-val" id="sl-XAUUSD">—</div></div>
           <div class="mini-metric"><div class="mini-label">Take profit</div><div class="mini-val" id="tp-XAUUSD">—</div></div>
         </div>
@@ -118,62 +131,40 @@ input::placeholder{color:var(--muted);}
     </div>
     <div class="card">
       <div class="card-title">Signal info</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.8;">Signals use live 1H data. <span style="color:var(--green);font-weight:700;">LONG</span> or <span style="color:var(--red);font-weight:700;">SHORT</span> only fires when all 4 conditions are met. <span style="color:var(--muted);font-weight:700;">WAIT</span> means stay out. Set your S/R levels in the S/R Levels tab to get full signals with SL and TP.</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;">Support and resistance are auto-detected from the last 60 candles using swing high/low analysis. Signals only fire when all 4 conditions align. Every LONG or SHORT is automatically logged to your Trade Journal.</div>
     </div>
   </div>
-
-  <div id="tab-alerts" class="tab">
-    <div class="grid2">
-      <div>
-        <div class="card">
-          <div class="card-title">GBP/JPY Support & Resistance</div>
-          <div class="field"><div class="field-label">Support level</div><input type="number" id="sr-support-GBPJPY" placeholder="e.g. 213.00" step="0.01"></div>
-          <div class="field"><div class="field-label">Resistance level</div><input type="number" id="sr-resistance-GBPJPY" placeholder="e.g. 217.00" step="0.01"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">XAU/USD Support & Resistance</div>
-          <div class="field"><div class="field-label">Support level</div><input type="number" id="sr-support-XAUUSD" placeholder="e.g. 3200.00" step="0.01"></div>
-          <div class="field"><div class="field-label">Resistance level</div><input type="number" id="sr-resistance-XAUUSD" placeholder="e.g. 3280.00" step="0.01"></div>
-        </div>
-        <button class="btn-save" onclick="saveSR()">Save & Refresh Signals</button>
+  <div id="tab-journal" class="tab">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total trades</div><div class="stat-val" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="stat-label">Win rate</div><div class="stat-val" id="stat-winrate">0%</div></div>
+      <div class="stat-card"><div class="stat-label">Total P&L</div><div class="stat-val" id="stat-pnl">$0</div></div>
+      <div class="stat-card"><div class="stat-label">Open trades</div><div class="stat-val" id="stat-open">0</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div class="card-title" style="margin-bottom:0;">Trade history</div>
+        <button class="clear-btn" onclick="clearJournal()">Clear journal</button>
       </div>
-      <div>
-        <div class="card">
-          <div class="card-title">SMS & Email alerts via Make.com</div>
-          <div class="alert-box">
-            <div class="alert-title">Your Verizon SMS address</div>
-            <div class="alert-text">Format: <span style="color:var(--accent2);font-family:'DM Mono',monospace;">yournumber@vzwpix.com</span><br>Example: <span style="color:var(--accent2);font-family:'DM Mono',monospace;">4045551234@vzwpix.com</span></div>
-          </div>
-          <div class="alert-box">
-            <div class="alert-title">Alert message template</div>
-            <div class="alert-text" style="font-family:'DM Mono',monospace;font-size:12px;">
-              FOREX ALERT<br>
-              Pair: [PAIR]<br>
-              Signal: [LONG/SHORT]<br>
-              Entry: [PRICE]<br>
-              SL: [SL] | TP: [TP]<br>
-              Check dashboard now.
-            </div>
-          </div>
-          <div class="alert-box">
-            <div class="alert-title">How alerts work</div>
-            <div class="alert-text">Make.com checks your pairs every 15 min via the Twelve Data API. When a LONG or SHORT fires, it sends an email to your Gmail and a text to your Verizon number. We'll finish setting this up in Make.com next.</div>
-          </div>
-        </div>
+      <div id="journal-empty" style="text-align:center;padding:2rem;color:var(--muted);font-size:13px;font-family:'DM Mono',monospace;">No trades logged yet. Signals will appear here automatically when LONG or SHORT fires.</div>
+      <div style="overflow-x:auto;">
+        <table class="journal-table" id="journal-table" style="display:none;">
+          <thead><tr><th>Date/Time</th><th>Pair</th><th>Direction</th><th>Entry</th><th>SL</th><th>TP</th><th>Status</th><th>P&L</th></tr></thead>
+          <tbody id="journal-body"></tbody>
+        </table>
       </div>
     </div>
   </div>
-
   <div id="tab-howto" class="tab">
     <div class="grid2">
       <div>
         <div class="card">
           <div class="card-title">Daily routine</div>
-          <div class="how-step"><div class="step-num">1</div><div class="step-content"><h3>Open this dashboard</h3><p>Bookmark this page. Open it each morning. Live prices and signals load automatically.</p></div></div>
-          <div class="how-step"><div class="step-num">2</div><div class="step-content"><h3>Set your S/R levels</h3><p>Open TradingView, mark key support and resistance on your chart, then enter them in the S/R Levels tab. Update weekly or when price breaks through.</p></div></div>
-          <div class="how-step"><div class="step-num">3</div><div class="step-content"><h3>Wait for a signal</h3><p>When a pair shows LONG or SHORT, open TradingView to visually confirm. If it looks good, take the trade using the SL and TP shown.</p></div></div>
-          <div class="how-step"><div class="step-num">4</div><div class="step-content"><h3>Get alerted automatically</h3><p>Once Make.com is configured you'll get a text and email the moment a signal fires. No need to watch the dashboard all day.</p></div></div>
-          <div class="how-step"><div class="step-num">5</div><div class="step-content"><h3>Manage the trade</h3><p>Move stop to breakeven at 1:1. Take profit at your target. Exit before major news (NFP, BOE, Fed).</p></div></div>
+          <div class="how-step"><div class="step-num">1</div><div class="step-content"><h3>Open this dashboard</h3><p>Bookmark this page. Prices, EMAs, and S/R levels all load automatically. No manual input needed.</p></div></div>
+          <div class="how-step"><div class="step-num">2</div><div class="step-content"><h3>Check the signals</h3><p>Green = Long, Red = Short, Gray = Wait. S/R is auto-detected so signals are fully automatic.</p></div></div>
+          <div class="how-step"><div class="step-num">3</div><div class="step-content"><h3>Get alerted automatically</h3><p>Google Apps Script checks every 15 min and texts and emails you when a signal fires.</p></div></div>
+          <div class="how-step"><div class="step-num">4</div><div class="step-content"><h3>Confirm on TradingView</h3><p>When you get an alert, open TradingView to visually confirm before entering.</p></div></div>
+          <div class="how-step"><div class="step-num">5</div><div class="step-content"><h3>Track your performance</h3><p>Every signal is logged automatically. Review win rate and P&L in the Trade Journal tab.</p></div></div>
         </div>
       </div>
       <div>
@@ -188,31 +179,30 @@ input::placeholder{color:var(--muted);}
         </div>
         <div class="card">
           <div class="card-title">Your pairs</div>
-          <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">GBP/JPY</div><div style="font-size:12px;color:var(--muted);">Most volatile. Wide stops needed. Best during London and NY sessions. High pip value — great for small accounts.</div></div>
-          <div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">XAU/USD (Gold)</div><div style="font-size:12px;color:var(--muted);">Explosive moves. Very news sensitive. Use 4H for cleaner signals. Always check economic calendar before entering.</div></div>
+          <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">GBP/JPY</div><div style="font-size:12px;color:var(--muted);">Most volatile. High pip value. Best during London and NY sessions.</div></div>
+          <div><div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">XAU/USD (Gold)</div><div style="font-size:12px;color:var(--muted);">Explosive moves. Very news sensitive. Always check economic calendar.</div></div>
         </div>
       </div>
     </div>
   </div>
-
   <div id="tab-rules" class="tab">
     <div class="grid2">
       <div>
         <div class="card">
           <div class="card-title">Entry rules — all 4 must be true</div>
-          <div class="rule-card"><div class="rule-title">Rule 1 — EMA alignment</div><div class="rule-text">20 EMA above 50 EMA = long bias. Below = short bias. Flat or tangled = no trade.</div></div>
-          <div class="rule-card"><div class="rule-title">Rule 2 — Price location</div><div class="rule-text">Long: price above 20 EMA. Short: price below 20 EMA. Never trade against EMA direction.</div></div>
-          <div class="rule-card"><div class="rule-title">Rule 3 — S/R confirmation</div><div class="rule-text">Long: price near support. Short: price near resistance. This is your entry trigger.</div></div>
-          <div class="rule-card"><div class="rule-title">Rule 4 — Minimum 2:1 R:R</div><div class="rule-text">TP must be at least 2x the SL distance. Below 2:1 = skip it, no exceptions.</div></div>
+          <div class="rule-card"><div class="rule-title">Rule 1 — EMA alignment</div><div class="rule-text">20 EMA above 50 EMA = long bias. Below = short bias. Flat = no trade.</div></div>
+          <div class="rule-card"><div class="rule-title">Rule 2 — Price location</div><div class="rule-text">Long: price above 20 EMA. Short: price below 20 EMA.</div></div>
+          <div class="rule-card"><div class="rule-title">Rule 3 — S/R confirmation</div><div class="rule-text">Long: price near auto-detected support. Short: near resistance.</div></div>
+          <div class="rule-card"><div class="rule-title">Rule 4 — Minimum 2:1 R:R</div><div class="rule-text">TP must be at least 2x the SL distance. Below 2:1 = skip.</div></div>
         </div>
       </div>
       <div>
         <div class="card">
           <div class="card-title">Risk management</div>
-          <div class="rule-card"><div class="rule-title">Risk 4% per trade</div><div class="rule-text">On $400 = $16 max per trade. Never exceed this no matter what.</div></div>
-          <div class="rule-card"><div class="rule-title">Stop loss placement</div><div class="rule-text">5 pips below support (longs) or above resistance (shorts). Never widen your stop.</div></div>
-          <div class="rule-card"><div class="rule-title">Breakeven rule</div><div class="rule-text">Move stop to entry once price moves 1:1 in your favor. Risk-free trade from there.</div></div>
-          <div class="rule-card"><div class="rule-title">Max 2 trades per day</div><div class="rule-text">Stop after 2 losses in one day. Quality over quantity always.</div></div>
+          <div class="rule-card"><div class="rule-title">Risk 4% per trade</div><div class="rule-text">On $400 = $16 max per trade. Never exceed this.</div></div>
+          <div class="rule-card"><div class="rule-title">Stop loss placement</div><div class="rule-text">5 pips below support (longs) or above resistance (shorts).</div></div>
+          <div class="rule-card"><div class="rule-title">Breakeven rule</div><div class="rule-text">Move stop to entry once price moves 1:1 in your favor.</div></div>
+          <div class="rule-card"><div class="rule-title">Max 2 trades per day</div><div class="rule-text">Stop after 2 losses in one day. Quality over quantity.</div></div>
         </div>
         <div class="card">
           <div class="card-title">When NOT to trade</div>
@@ -220,7 +210,7 @@ input::placeholder{color:var(--muted);}
             <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>30 mins before/after NFP, CPI, BOE, Fed</div>
             <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>EMAs flat or tangled</div>
             <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>R:R below 2:1</div>
-            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>Asian session (8pm - 2am EST)</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);"><div class="dot dot-red"></div>Asian session (8pm-2am EST)</div>
             <div style="display:flex;gap:8px;align-items:center;padding:6px 0;"><div class="dot dot-red"></div>After 2 losing trades in one day</div>
           </div>
         </div>
@@ -228,15 +218,15 @@ input::placeholder{color:var(--muted);}
     </div>
   </div>
 </div>
-
 <script>
-const API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
-const PAIRS = ['GBPJPY','XAUUSD'];
-const SYMBOLS = {GBPJPY:'GBP/JPY',XAUUSD:'XAU/USD'};
+var API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
+var PAIRS = ['GBPJPY','XAUUSD'];
+var SYMBOLS = {GBPJPY:'GBP/JPY',XAUUSD:'XAU/USD'};
+var RISK_AMOUNT = 16;
 
 function switchTab(name,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('tab-'+name).classList.add('active');
   btn.classList.add('active');
 }
@@ -248,86 +238,141 @@ function fmt(val,pair){
 }
 
 function calcEMA(prices,period){
-  const k=2/(period+1);
-  let ema=prices.slice(0,period).reduce((a,b)=>a+b,0)/period;
-  for(let i=period;i<prices.length;i++)ema=prices[i]*k+ema*(1-k);
+  var k=2/(period+1);
+  var ema=0;
+  for(var i=0;i<period;i++)ema+=prices[i];
+  ema=ema/period;
+  for(var j=period;j<prices.length;j++)ema=prices[j]*k+ema*(1-k);
   return ema;
 }
 
-function getSR(pair){
-  return{
-    support:parseFloat(localStorage.getItem('support-'+pair))||null,
-    resistance:parseFloat(localStorage.getItem('resistance-'+pair))||null
-  };
+function detectSR(values){
+  var highs=[],lows=[],i=0;
+  for(i=0;i<values.length;i++){highs.push(parseFloat(values[i].high));lows.push(parseFloat(values[i].low));}
+  var swingHighs=[],swingLows=[];
+  for(i=2;i<values.length-2;i++){
+    if(highs[i]>highs[i-1]&&highs[i]>highs[i-2]&&highs[i]>highs[i+1]&&highs[i]>highs[i+2])swingHighs.push(highs[i]);
+    if(lows[i]<lows[i-1]&&lows[i]<lows[i-2]&&lows[i]<lows[i+1]&&lows[i]<lows[i+2])swingLows.push(lows[i]);
+  }
+  swingHighs.sort(function(a,b){return b-a;});
+  swingLows.sort(function(a,b){return a-b;});
+  var currentPrice=parseFloat(values[0].close);
+  var resistance=null,support=null;
+  for(var r=0;r<swingHighs.length;r++){if(swingHighs[r]>currentPrice){resistance=swingHighs[r];break;}}
+  for(var s=0;s<swingLows.length;s++){if(swingLows[s]<currentPrice){support=swingLows[s];break;}}
+  return{support:support,resistance:resistance};
 }
 
-function saveSR(){
-  PAIRS.forEach(pair=>{
-    const s=document.getElementById('sr-support-'+pair).value;
-    const r=document.getElementById('sr-resistance-'+pair).value;
-    if(s)localStorage.setItem('support-'+pair,s);
-    if(r)localStorage.setItem('resistance-'+pair,r);
-  });
-  loadAll();
-  switchTab('signals',document.querySelectorAll('.nav-btn')[0]);
+function getJournal(){try{return JSON.parse(localStorage.getItem('forex_journal'))||[];}catch(e){return[];}}
+function saveJournal(j){localStorage.setItem('forex_journal',JSON.stringify(j));}
+
+function logTrade(pair,direction,entry,sl,tp){
+  var journal=getJournal();
+  var existing=journal.find(function(t){return t.pair===pair&&t.status==='open'&&t.direction===direction;});
+  if(existing)return;
+  journal.unshift({id:Date.now(),datetime:new Date().toLocaleString(),pair:pair,direction:direction,entry:entry,sl:sl,tp:tp,status:'open',pnl:null});
+  if(journal.length>100)journal=journal.slice(0,100);
+  saveJournal(journal);
 }
 
-function loadSRInputs(){
-  PAIRS.forEach(pair=>{
-    const s=localStorage.getItem('support-'+pair);
-    const r=localStorage.getItem('resistance-'+pair);
-    if(s)document.getElementById('sr-support-'+pair).value=s;
-    if(r)document.getElementById('sr-resistance-'+pair).value=r;
+function updateTradeStatuses(pair,currentPrice){
+  var journal=getJournal();
+  var changed=false;
+  journal.forEach(function(trade){
+    if(trade.pair!==pair||trade.status!=='open')return;
+    var p=parseFloat(currentPrice),tp=parseFloat(trade.tp),sl=parseFloat(trade.sl);
+    if(trade.direction==='long'){
+      if(p>=tp){trade.status='win';trade.pnl=RISK_AMOUNT*2;changed=true;}
+      else if(p<=sl){trade.status='loss';trade.pnl=-RISK_AMOUNT;changed=true;}
+    }else{
+      if(p<=tp){trade.status='win';trade.pnl=RISK_AMOUNT*2;changed=true;}
+      else if(p>=sl){trade.status='loss';trade.pnl=-RISK_AMOUNT;changed=true;}
+    }
   });
+  if(changed)saveJournal(journal);
 }
+
+function renderJournal(){
+  var journal=getJournal();
+  var tbody=document.getElementById('journal-body');
+  var table=document.getElementById('journal-table');
+  var empty=document.getElementById('journal-empty');
+  if(journal.length===0){
+    empty.style.display='block';table.style.display='none';
+    document.getElementById('stat-total').textContent='0';
+    document.getElementById('stat-winrate').textContent='0%';
+    document.getElementById('stat-pnl').textContent='$0';
+    document.getElementById('stat-open').textContent='0';
+    return;
+  }
+  empty.style.display='none';table.style.display='table';
+  var wins=journal.filter(function(t){return t.status==='win';}).length;
+  var losses=journal.filter(function(t){return t.status==='loss';}).length;
+  var open=journal.filter(function(t){return t.status==='open';}).length;
+  var closed=wins+losses;
+  var winrate=closed>0?Math.round((wins/closed)*100):0;
+  var totalPnl=journal.reduce(function(sum,t){return sum+(t.pnl||0);},0);
+  document.getElementById('stat-total').textContent=journal.length;
+  document.getElementById('stat-winrate').textContent=winrate+'%';
+  document.getElementById('stat-winrate').style.color=winrate>=50?'var(--green)':'var(--red)';
+  document.getElementById('stat-pnl').textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(2);
+  document.getElementById('stat-pnl').style.color=totalPnl>=0?'var(--green)':'var(--red)';
+  document.getElementById('stat-open').textContent=open;
+  tbody.innerHTML=journal.map(function(t){
+    var sc=t.status==='win'?'status-win':t.status==='loss'?'status-loss':'status-open';
+    var sl=t.status==='win'?'WIN':t.status==='loss'?'LOSS':'OPEN';
+    var pnlStr=t.pnl!=null?(t.pnl>=0?'+$'+t.pnl.toFixed(2):'-$'+Math.abs(t.pnl).toFixed(2)):'—';
+    var pc=t.pnl!=null?(t.pnl>=0?'pnl-pos':'pnl-neg'):'';
+    var dc=t.direction==='long'?'var(--green)':'var(--red)';
+    return '<tr><td>'+t.datetime+'</td><td style="font-weight:700;">'+t.pair+'</td><td style="color:'+dc+';font-weight:700;">'+t.direction.toUpperCase()+'</td><td>'+parseFloat(t.entry).toFixed(3)+'</td><td>'+parseFloat(t.sl).toFixed(3)+'</td><td>'+parseFloat(t.tp).toFixed(3)+'</td><td class="'+sc+'">'+sl+'</td><td class="'+pc+'">'+pnlStr+'</td></tr>';
+  }).join('');
+}
+
+function clearJournal(){if(confirm('Clear all trade history?')){localStorage.removeItem('forex_journal');renderJournal();}}
 
 async function fetchPairData(pair){
-  const symbol=SYMBOLS[pair];
+  var symbol=SYMBOLS[pair];
   try{
-    const res=await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=1h&outputsize=60&apikey=${API_KEY}`);
-    const data=await res.json();
+    var res=await fetch('https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(symbol)+'&interval=1h&outputsize=60&apikey='+API_KEY);
+    var data=await res.json();
     if(!data.values||data.values.length<51)return null;
-    const closes=data.values.map(v=>parseFloat(v.close)).reverse();
-    const price=closes[closes.length-1];
-    const ema20=calcEMA(closes,20);
-    const ema50=calcEMA(closes,50);
-    return{price,ema20,ema50};
+    var closes=[],i=0;
+    for(i=data.values.length-1;i>=0;i--)closes.push(parseFloat(data.values[i].close));
+    var price=closes[closes.length-1];
+    var ema20=calcEMA(closes,20);
+    var ema50=calcEMA(closes,50);
+    var sr=detectSR(data.values);
+    return{price:price,ema20:ema20,ema50:ema50,support:sr.support,resistance:sr.resistance,rawValues:data.values};
   }catch(e){return null;}
 }
 
-function analyzeSignal(pair,price,ema20,ema50){
-  const{support,resistance}=getSR(pair);
-  const pipSize=pair==='XAUUSD'?0.5:0.01;
-  const maLong=ema20>ema50,maShort=ema20<ema50;
-  const priceAboveEma20=price>ema20,priceBelowEma20=price<ema20;
-  const nearSupport=support&&Math.abs(price-support)/price<0.007;
-  const nearResistance=resistance&&Math.abs(price-resistance)/price<0.007;
-  let direction='wait',checks=[],score=0;
+function analyzeAndUpdate(pair,data){
+  var price=data.price,ema20=data.ema20,ema50=data.ema50,support=data.support,resistance=data.resistance;
+  var pipSize=pair==='XAUUSD'?0.1:0.01;
+  var maLong=ema20>ema50,maShort=ema20<ema50;
+  var priceAboveEma20=price>ema20,priceBelowEma20=price<ema20;
+  var nearSupport=support&&Math.abs(price-support)/price<0.008;
+  var nearResistance=resistance&&Math.abs(price-resistance)/price<0.008;
+  var direction='wait',checks=[],score=0;
 
   if(maLong){checks.push({label:'20 EMA above 50 EMA — bullish trend',pass:true});score++;}
   else if(maShort){checks.push({label:'20 EMA below 50 EMA — bearish trend',pass:true});score++;}
   else{checks.push({label:'EMAs flat — no clear trend',pass:false});}
 
-  if(maLong&&priceAboveEma20){checks.push({label:'Price above 20 EMA — long bias confirmed',pass:true});score++;direction='long';}
-  else if(maShort&&priceBelowEma20){checks.push({label:'Price below 20 EMA — short bias confirmed',pass:true});score++;direction='short';}
+  if(maLong&&priceAboveEma20){checks.push({label:'Price above 20 EMA — long bias',pass:true});score++;direction='long';}
+  else if(maShort&&priceBelowEma20){checks.push({label:'Price below 20 EMA — short bias',pass:true});score++;direction='short';}
   else{checks.push({label:'Price not aligned with EMA direction',pass:false});}
 
-  if(!support||!resistance){
-    checks.push({label:'Set S/R levels in S/R Levels tab',pass:false});
-  }else if(direction==='long'&&nearSupport){
-    checks.push({label:'Near support — valid long entry zone',pass:true});score++;
-  }else if(direction==='short'&&nearResistance){
-    checks.push({label:'Near resistance — valid short entry zone',pass:true});score++;
-  }else if(direction==='long'){
-    checks.push({label:'Not near support — wait for pullback',pass:false});
-  }else if(direction==='short'){
-    checks.push({label:'Not near resistance — wait for push up',pass:false});
-  }
+  if(!support||!resistance){checks.push({label:'Insufficient data for auto S/R',pass:false});}
+  else if(direction==='long'&&nearSupport){checks.push({label:'Near auto-detected support — long entry zone',pass:true});score++;}
+  else if(direction==='short'&&nearResistance){checks.push({label:'Near auto-detected resistance — short entry zone',pass:true});score++;}
+  else if(direction==='long'){checks.push({label:'Not near support — wait for pullback',pass:false});}
+  else if(direction==='short'){checks.push({label:'Not near resistance — wait for push up',pass:false});}
 
-  let rr=0,sl=null,tp=null;
+  var rr=0,sl=null,tp=null;
   if(support&&resistance){
-    const distSL=direction==='long'?Math.abs(price-support):Math.abs(resistance-price);
-    const distTP=direction==='long'?Math.abs(resistance-price):Math.abs(price-support);
+    var distSL=direction==='long'?Math.abs(price-support):Math.abs(resistance-price);
+    var distTP=direction==='long'?Math.abs(resistance-price):Math.abs(price-support);
     rr=distSL>0?distTP/distSL:0;
     if(rr>=2){checks.push({label:'R:R '+rr.toFixed(1)+':1 — valid setup',pass:true});score++;}
     else if(rr>0){checks.push({label:'R:R '+rr.toFixed(1)+':1 — below 2:1 minimum',pass:false});direction='wait';}
@@ -336,45 +381,49 @@ function analyzeSignal(pair,price,ema20,ema50){
   }
 
   if(score<3)direction='wait';
-  return{direction,checks,sl,tp};
-}
+  updateTradeStatuses(pair,price);
+  if(direction!=='wait'&&sl&&tp)logTrade(pair,direction,price,sl,tp);
 
-function updateCard(pair,price,ema20,ema50){
-  const{direction,checks,sl,tp}=analyzeSignal(pair,price,ema20,ema50);
-  const card=document.getElementById('card-'+pair);
+  var card=document.getElementById('card-'+pair);
   card.style.borderColor=direction==='long'?'rgba(34,197,94,0.4)':direction==='short'?'rgba(239,68,68,0.4)':'rgba(255,255,255,0.07)';
   card.style.background=direction==='long'?'rgba(34,197,94,0.05)':direction==='short'?'rgba(239,68,68,0.05)':'var(--surface)';
   document.getElementById('price-'+pair).textContent=fmt(price,pair);
-  const badge=document.getElementById('badge-'+pair);
+  var badge=document.getElementById('badge-'+pair);
   badge.textContent=direction==='long'?'LONG — BUY':direction==='short'?'SHORT — SELL':'WAIT — NO TRADE';
   badge.className='signal-badge '+(direction==='long'?'badge-long':direction==='short'?'badge-short':'badge-wait');
   document.getElementById('ema20-'+pair).textContent=fmt(ema20,pair);
   document.getElementById('ema50-'+pair).textContent=fmt(ema50,pair);
-  document.getElementById('sl-'+pair).textContent=sl?fmt(sl,pair):'Set S/R';
-  document.getElementById('tp-'+pair).textContent=tp?fmt(tp,pair):'Set S/R';
-  document.getElementById('checks-'+pair).innerHTML=checks.map(c=>
-    `<div class="check-row"><div class="dot ${c.pass?'dot-green':'dot-red'}"></div><span style="color:${c.pass?'var(--text)':'var(--muted)'};">${c.label}</span></div>`
-  ).join('');
+  document.getElementById('pvsema-'+pair).textContent=priceAboveEma20?'Above':'Below';
+  document.getElementById('pvsema-'+pair).style.color=priceAboveEma20?'var(--green)':'var(--red)';
+  document.getElementById('support-'+pair).textContent=support?fmt(support,pair):'—';
+  document.getElementById('resistance-'+pair).textContent=resistance?fmt(resistance,pair):'—';
+  document.getElementById('rr-'+pair).textContent=rr>0?rr.toFixed(1)+':1':'—';
+  document.getElementById('sl-'+pair).textContent=sl?fmt(sl,pair):'—';
+  document.getElementById('tp-'+pair).textContent=tp?fmt(tp,pair):'—';
+  document.getElementById('checks-'+pair).innerHTML=checks.map(function(c){
+    return '<div class="check-row"><div class="dot '+(c.pass?'dot-green':'dot-red')+'"></div><span style="color:'+(c.pass?'var(--text)':'var(--muted)')+';">'+c.label+'</span></div>';
+  }).join('');
 }
 
 async function loadAll(){
   document.getElementById('last-update').textContent='Loading...';
-  for(const pair of PAIRS){
-    const data=await fetchPairData(pair);
+  for(var i=0;i<PAIRS.length;i++){
+    var pair=PAIRS[i];
+    var data=await fetchPairData(pair);
     if(data&&data.price&&data.ema20&&data.ema50){
-      updateCard(pair,data.price,data.ema20,data.ema50);
+      analyzeAndUpdate(pair,data);
     }else{
       document.getElementById('badge-'+pair).textContent='API limit — try again shortly';
       document.getElementById('badge-'+pair).className='signal-badge badge-loading';
       document.getElementById('price-'+pair).textContent='—';
     }
-    await new Promise(r=>setTimeout(r,10000));
+    if(i<PAIRS.length-1)await new Promise(function(r){setTimeout(r,10000);});
   }
-  const now=new Date();
-  document.getElementById('last-update').textContent='Updated '+now.toLocaleTimeString();
+  renderJournal();
+  document.getElementById('last-update').textContent='Updated '+new Date().toLocaleTimeString();
 }
 
-loadSRInputs();
+renderJournal();
 loadAll();
 setInterval(loadAll,15*60*1000);
 </script>
