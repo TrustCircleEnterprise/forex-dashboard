@@ -415,3 +415,71 @@ setInterval(loadAll,15*60*1000);
 </script>
 </body>
 </html>
+<script>
+function playChaChing(){
+  var ctx=new(window.AudioContext||window.webkitAudioContext)();
+  function note(freq,start,dur,vol){
+    var o=ctx.createOscillator();
+    var g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=freq;
+    o.type='triangle';
+    g.gain.setValueAtTime(0,ctx.currentTime+start);
+    g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
+    o.start(ctx.currentTime+start);
+    o.stop(ctx.currentTime+start+dur+0.1);
+  }
+  note(1318,0,0.15,0.3);
+  note(1568,0.1,0.15,0.3);
+  note(2093,0.2,0.3,0.4);
+  note(1760,0.25,0.2,0.2);
+  note(2349,0.35,0.5,0.5);
+}
+var _lastSignals={};
+var _origAnalyze=analyzeAndUpdate;
+analyzeAndUpdate=function(pair,data){
+  _origAnalyze(pair,data);
+  var badge=document.getElementById('badge-'+pair);
+  if(badge){
+    var txt=badge.textContent;
+    var isSignal=txt.indexOf('LONG')!==-1||txt.indexOf('SHORT')!==-1;
+    if(isSignal){
+      playChaChing();
+    }
+  }
+};
+</script>
+<script>
+function playChaChing(){
+  var ctx=new(window.AudioContext||window.webkitAudioContext)();
+  function note(freq,start,dur,vol){
+    var o=ctx.createOscillator();
+    var g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=freq;
+    o.type='triangle';
+    g.gain.setValueAtTime(0,ctx.currentTime+start);
+    g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
+    o.start(ctx.currentTime+start);
+    o.stop(ctx.currentTime+start+dur+0.1);
+  }
+  note(1318,0,0.15,0.3);
+  note(1568,0.1,0.15,0.3);
+  note(2093,0.2,0.3,0.4);
+  note(1760,0.25,0.2,0.2);
+  note(2349,0.35,0.5,0.5);
+}
+var _lastSignals={};
+var _origAnalyze=analyzeAndUpdate;
+analyzeAndUpdate=function(pair,data){
+  _origAnalyze(pair,data);
+  var badge=document.getElementById('badge-'+pair);
+  if(badge){
+    var txt=badge.textContent;
+    var isSignal=txt.indexOf('LONG')!==-1||txt.indexOf('SHORT')!==-1;
+    if(isSignal){playChaChing();}
+  }
+};
+</script>
