@@ -92,10 +92,11 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   </header>
   <div class="nav">
     <button class="nav-btn active" onclick="switchTab('signals',this)">Signals</button>
-    <button class="nav-btn" onclick="switchTab('journal',this)">Journal</button>
+    <button class="nav-btn" onclick="switchTab('journal',this);loadJournal();">Journal</button>
     <button class="nav-btn" onclick="switchTab('howto',this)">How to Use</button>
     <button class="nav-btn" onclick="switchTab('rules',this)">Rules</button>
   </div>
+
   <div id="tab-signals" class="tab active">
     <div class="grid2">
       <div class="pair-card" id="card-GBPJPY">
@@ -148,6 +149,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
       <div style="font-size:12px;color:var(--muted);line-height:1.8;">S/R auto-detected from last 60 candles. Confluence bar shows how close each pair is to firing. 4/4 = trade signal. SL is always placed beyond S/R. TP targets the opposite S/R level.</div>
     </div>
   </div>
+
   <div id="tab-journal" class="tab">
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">Total trades</div><div class="stat-val" id="stat-total">0</div></div>
@@ -157,18 +159,20 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
     </div>
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-        <div class="card-title" style="margin-bottom:0;">Trade history</div>
-        <button class="clear-btn" onclick="clearJournal()">Clear</button>
+        <div class="card-title" style="margin-bottom:0;">Trade history — synced across all devices</div>
+        <button class="refresh-btn" onclick="loadJournal()" style="font-size:11px;padding:5px 10px;">Refresh</button>
       </div>
-      <div id="journal-empty" style="text-align:center;padding:2rem;color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;">No trades yet. Signals appear here automatically when 3+ conditions met.</div>
+      <div id="journal-loading" style="text-align:center;padding:2rem;color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;">Loading trades from Google Sheet...</div>
+      <div id="journal-empty" style="text-align:center;padding:2rem;color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;display:none;">No trades logged yet. Signals appear here automatically when 4/4 conditions met.</div>
       <div style="overflow-x:auto;">
         <table class="journal-table" id="journal-table" style="display:none;">
-          <thead><tr><th>Time</th><th>Pair</th><th>Dir</th><th>Entry</th><th>SL</th><th>TP</th><th>R:R</th><th>Status</th><th>P&L</th></tr></thead>
+          <thead><tr><th>Time</th><th>Pair</th><th>Dir</th><th>Entry</th><th>SL</th><th>TP</th><th>R:R</th><th>Score</th><th>Pattern</th><th>Status</th><th>P&L</th></tr></thead>
           <tbody id="journal-body"></tbody>
         </table>
       </div>
     </div>
   </div>
+
   <div id="tab-howto" class="tab">
     <div class="grid2">
       <div>
@@ -176,9 +180,9 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
           <div class="card-title">Daily routine</div>
           <div class="how-step"><div class="step-num">1</div><div class="step-content"><h3>Open this dashboard</h3><p>Bookmark this page. Everything loads automatically.</p></div></div>
           <div class="how-step"><div class="step-num">2</div><div class="step-content"><h3>Check the confluence bar</h3><p>4/4 = signal fires. 3/4 means a setup is forming.</p></div></div>
-          <div class="how-step"><div class="step-num">3</div><div class="step-content"><h3>Get alerted automatically</h3><p>Texts and emails sent 6am-6pm EST when signal fires.</p></div></div>
+          <div class="how-step"><div class="step-num">3</div><div class="step-content"><h3>Get alerted automatically</h3><p>Texts and emails sent 6am-11pm EST when signal fires.</p></div></div>
           <div class="how-step"><div class="step-num">4</div><div class="step-content"><h3>Confirm on TradingView</h3><p>Visually confirm the setup before entering.</p></div></div>
-          <div class="how-step"><div class="step-num">5</div><div class="step-content"><h3>Check your journal</h3><p>Every signal with 3+ conditions is logged automatically.</p></div></div>
+          <div class="how-step"><div class="step-num">5</div><div class="step-content"><h3>Check your journal</h3><p>All trades synced across all your devices via Google Sheet.</p></div></div>
         </div>
       </div>
       <div>
@@ -188,12 +192,13 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
             <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);"><span style="color:var(--muted);">London open</span><span style="color:var(--green);">3am - 5am</span></div>
             <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);"><span style="color:var(--muted);">London/NY overlap</span><span style="color:var(--green);">8am - 12pm</span></div>
             <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);"><span style="color:var(--muted);">NY session</span><span style="color:var(--accent2);">12pm - 5pm</span></div>
-            <div style="display:flex;justify-content:space-between;padding:7px 0;"><span style="color:var(--muted);">Avoid</span><span style="color:var(--red);">6pm - 6am</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 0;"><span style="color:var(--muted);">Avoid</span><span style="color:var(--red);">11pm - 6am</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <div id="tab-rules" class="tab">
     <div class="grid2">
       <div>
@@ -217,22 +222,27 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
     </div>
   </div>
 </div>
+
 <script>
 var API_KEY='a4d0a7c860394083a0d82f5bedafc239';
+var SHEET_ID='18C3wbnwUJQYvBw-n0iyOjI07q8-HyFryMuTPXpyQYPc';
 var PAIRS=['GBPJPY','XAUUSD'];
 var SYMBOLS={GBPJPY:'GBP/JPY',XAUUSD:'XAU/USD'};
 var RISK_AMOUNT=16;
+
 function switchTab(name,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('tab-'+name).classList.add('active');
   btn.classList.add('active');
 }
+
 function fmt(val,pair){
   if(!val||isNaN(val))return'--';
   if(pair==='XAUUSD')return parseFloat(val).toFixed(2);
   return parseFloat(val).toFixed(3);
 }
+
 function calcEMA(prices,period){
   var k=2/(period+1),ema=0,i=0;
   for(i=0;i<period;i++)ema+=prices[i];
@@ -240,6 +250,7 @@ function calcEMA(prices,period){
   for(i=period;i<prices.length;i++)ema=prices[i]*k+ema*(1-k);
   return ema;
 }
+
 function detectSR(values){
   var highs=[],lows=[],i=0;
   for(i=0;i<values.length;i++){highs.push(parseFloat(values[i].high));lows.push(parseFloat(values[i].low));}
@@ -255,64 +266,95 @@ function detectSR(values){
   for(var s=0;s<swingLows.length;s++){if(swingLows[s]<cp){support=swingLows[s];break;}}
   return{support:support,resistance:resistance};
 }
-function getJournal(){try{return JSON.parse(localStorage.getItem('forex_journal'))||[];}catch(e){return[];}}
-function saveJournal(j){localStorage.setItem('forex_journal',JSON.stringify(j));}
-function logTrade(pair,direction,entry,sl,tp,rr,score){
-  var journal=getJournal();
-  var existing=journal.find(function(t){return t.pair===pair&&t.status==='open'&&t.direction===direction;});
-  if(existing)return;
-  journal.unshift({id:Date.now(),datetime:new Date().toLocaleString(),pair:pair,direction:direction,entry:parseFloat(entry).toFixed(3),sl:parseFloat(sl).toFixed(3),tp:parseFloat(tp).toFixed(3),rr:parseFloat(rr).toFixed(1),score:score,status:'open',pnl:null});
-  if(journal.length>100)journal=journal.slice(0,100);
-  saveJournal(journal);
-}
-function updateTradeStatuses(pair,currentPrice){
-  var journal=getJournal(),changed=false;
-  journal.forEach(function(trade){
-    if(trade.pair!==pair||trade.status!=='open')return;
-    var p=parseFloat(currentPrice),tp=parseFloat(trade.tp),sl=parseFloat(trade.sl);
-    if(trade.direction==='long'){
-      if(p>=tp){trade.status='win';trade.pnl=RISK_AMOUNT*2;changed=true;}
-      else if(p<=sl){trade.status='loss';trade.pnl=-RISK_AMOUNT;changed=true;}
-    }else{
-      if(p<=tp){trade.status='win';trade.pnl=RISK_AMOUNT*2;changed=true;}
-      else if(p>=sl){trade.status='loss';trade.pnl=-RISK_AMOUNT;changed=true;}
+
+async function loadJournal(){
+  document.getElementById('journal-loading').style.display='block';
+  document.getElementById('journal-empty').style.display='none';
+  document.getElementById('journal-table').style.display='none';
+  try{
+    var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json';
+    var res=await fetch(url);
+    var text=await res.text();
+    var json=JSON.parse(text.substr(47).slice(0,-2));
+    var rows=json.table.rows;
+    if(!rows||rows.length===0){
+      document.getElementById('journal-loading').style.display='none';
+      document.getElementById('journal-empty').style.display='block';
+      return;
     }
-  });
-  if(changed)saveJournal(journal);
-}
-function renderJournal(){
-  var journal=getJournal();
-  var tbody=document.getElementById('journal-body');
-  var table=document.getElementById('journal-table');
-  var empty=document.getElementById('journal-empty');
-  if(journal.length===0){
-    empty.style.display='block';table.style.display='none';
-    ['stat-total','stat-winrate','stat-pnl','stat-open'].forEach(function(id){document.getElementById(id).textContent=id==='stat-winrate'?'0%':id==='stat-pnl'?'$0':'0';});
-    return;
+    var trades=rows.map(function(r){
+      return{
+        datetime:r.c[0]?r.c[0].v:'',
+        pair:r.c[1]?r.c[1].v:'',
+        direction:r.c[2]?r.c[2].v:'',
+        entry:r.c[3]?r.c[3].v:'',
+        sl:r.c[4]?r.c[4].v:'',
+        tp:r.c[5]?r.c[5].v:'',
+        rr:r.c[6]?r.c[6].v:'',
+        score:r.c[7]?r.c[7].v:'',
+        pattern:r.c[8]?r.c[8].v:'',
+        status:r.c[9]?r.c[9].v:'OPEN',
+        pnl:r.c[10]?r.c[10].v:''
+      };
+    }).reverse();
+
+    var wins=trades.filter(function(t){return t.status==='WIN';}).length;
+    var losses=trades.filter(function(t){return t.status==='LOSS';}).length;
+    var open=trades.filter(function(t){return t.status==='OPEN';}).length;
+    var closed=wins+losses;
+    var winrate=closed>0?Math.round((wins/closed)*100):0;
+    var totalPnl=(wins*RISK_AMOUNT*2)-(losses*RISK_AMOUNT);
+
+    document.getElementById('stat-total').textContent=trades.length;
+    document.getElementById('stat-winrate').textContent=winrate+'%';
+    document.getElementById('stat-winrate').style.color=winrate>=50?'var(--green)':'var(--red)';
+    document.getElementById('stat-pnl').textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(2);
+    document.getElementById('stat-pnl').style.color=totalPnl>=0?'var(--green)':'var(--red)';
+    document.getElementById('stat-open').textContent=open;
+
+    document.getElementById('journal-loading').style.display='none';
+    document.getElementById('journal-table').style.display='table';
+    document.getElementById('journal-body').innerHTML=trades.map(function(t){
+      var sc=t.status==='WIN'?'status-win':t.status==='LOSS'?'status-loss':'status-open';
+      var dc=t.direction==='LONG'?'var(--green)':'var(--red)';
+      var pnlVal=t.status==='WIN'?'+$'+(RISK_AMOUNT*2).toFixed(2):t.status==='LOSS'?'-$'+RISK_AMOUNT.toFixed(2):'--';
+      var pc=t.status==='WIN'?'pnl-pos':t.status==='LOSS'?'pnl-neg':'';
+      return '<tr><td>'+t.datetime+'</td><td style="font-weight:700;">'+t.pair+'</td>'
+        +'<td style="color:'+dc+';font-weight:700;">'+t.direction+'</td>'
+        +'<td>'+t.entry+'</td>'
+        +'<td style="color:var(--red);">'+t.sl+'</td>'
+        +'<td style="color:var(--green);">'+t.tp+'</td>'
+        +'<td>'+t.rr+'</td>'
+        +'<td>'+t.score+'</td>'
+        +'<td style="font-size:10px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+t.pattern+'</td>'
+        +'<td class="'+sc+'">'+t.status+'</td>'
+        +'<td class="'+pc+'">'+pnlVal+'</td></tr>';
+    }).join('');
+  }catch(e){
+    document.getElementById('journal-loading').style.display='none';
+    document.getElementById('journal-empty').style.display='block';
+    document.getElementById('journal-empty').textContent='Error loading journal. Check sheet permissions.';
   }
-  empty.style.display='none';table.style.display='table';
-  var wins=journal.filter(function(t){return t.status==='win';}).length;
-  var losses=journal.filter(function(t){return t.status==='loss';}).length;
-  var open=journal.filter(function(t){return t.status==='open';}).length;
-  var closed=wins+losses;
-  var winrate=closed>0?Math.round((wins/closed)*100):0;
-  var totalPnl=journal.reduce(function(sum,t){return sum+(t.pnl||0);},0);
-  document.getElementById('stat-total').textContent=journal.length;
-  document.getElementById('stat-winrate').textContent=winrate+'%';
-  document.getElementById('stat-winrate').style.color=winrate>=50?'var(--green)':'var(--red)';
-  document.getElementById('stat-pnl').textContent=(totalPnl>=0?'+':'')+totalPnl.toFixed(2);
-  document.getElementById('stat-pnl').style.color=totalPnl>=0?'var(--green)':'var(--red)';
-  document.getElementById('stat-open').textContent=open;
-  tbody.innerHTML=journal.map(function(t){
-    var sc=t.status==='win'?'status-win':t.status==='loss'?'status-loss':'status-open';
-    var sl=t.status==='win'?'WIN':t.status==='loss'?'LOSS':'OPEN';
-    var pnlStr=t.pnl!=null?(t.pnl>=0?'+$'+t.pnl.toFixed(2):'-$'+Math.abs(t.pnl).toFixed(2)):'--';
-    var pc=t.pnl!=null?(t.pnl>=0?'pnl-pos':'pnl-neg'):'';
-    var dc=t.direction==='long'?'var(--green)':'var(--red)';
-    return '<tr><td>'+t.datetime+'</td><td style="font-weight:700;">'+t.pair+'</td><td style="color:'+dc+';font-weight:700;">'+t.direction.toUpperCase()+'</td><td>'+t.entry+'</td><td style="color:var(--red);">'+t.sl+'</td><td style="color:var(--green);">'+t.tp+'</td><td>'+t.rr+':1</td><td class="'+sc+'">'+sl+'</td><td class="'+pc+'">'+pnlStr+'</td></tr>';
-  }).join('');
 }
-function clearJournal(){if(confirm('Clear all trade history?')){localStorage.removeItem('forex_journal');renderJournal();}}
+
+function playChaChing(){
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    function note(freq,start,dur,vol){
+      var o=ctx.createOscillator();
+      var g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=freq;o.type='triangle';
+      g.gain.setValueAtTime(0,ctx.currentTime+start);
+      g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
+      o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+0.1);
+    }
+    note(1318,0,0.15,0.3);note(1568,0.1,0.15,0.3);note(2093,0.2,0.3,0.4);
+    note(1760,0.25,0.2,0.2);note(2349,0.35,0.5,0.5);
+  }catch(e){}
+}
+
 function updateConfluence(pair,score){
   var pct=(score/4)*100;
   var color=score===4?'var(--green)':score===3?'var(--amber)':score>=2?'#60a5fa':'var(--muted)';
@@ -321,6 +363,7 @@ function updateConfluence(pair,score){
   document.getElementById('confluence-text-'+pair).textContent=score+'/4 conditions';
   document.getElementById('confluence-text-'+pair).style.color=color;
 }
+
 async function fetchPairData(pair){
   var symbol=SYMBOLS[pair];
   try{
@@ -336,6 +379,7 @@ async function fetchPairData(pair){
     return{price:price,ema20:ema20,ema50:ema50,support:sr.support,resistance:sr.resistance};
   }catch(e){return null;}
 }
+
 function analyzeAndUpdate(pair,data){
   var price=data.price,ema20=data.ema20,ema50=data.ema50,support=data.support,resistance=data.resistance;
   var pipSize=pair==='XAUUSD'?0.1:0.01;
@@ -367,10 +411,9 @@ function analyzeAndUpdate(pair,data){
       else if(rr>0){checks.push({label:'R:R '+rr.toFixed(1)+':1 - below 2:1 minimum',pass:false});direction='wait';}
     }
   }
-  if(score<3)direction='wait';
+  if(score<4)direction='wait';
   updateConfluence(pair,score);
-  updateTradeStatuses(pair,price);
-  if(score>=3&&sl&&tp&&direction!=='wait'){logTrade(pair,direction,price,sl,tp,rr,score);}
+  if(score===4&&direction!=='wait'){playChaChing();}
   var card=document.getElementById('card-'+pair);
   card.style.borderColor=direction==='long'?'rgba(34,197,94,0.4)':direction==='short'?'rgba(239,68,68,0.4)':'rgba(255,255,255,0.07)';
   card.style.background=direction==='long'?'rgba(34,197,94,0.05)':direction==='short'?'rgba(239,68,68,0.05)':'var(--surface)';
@@ -393,6 +436,7 @@ function analyzeAndUpdate(pair,data){
     return '<div class="check-row"><div class="dot '+(c.pass?'dot-green':'dot-red')+'"></div><span style="color:'+(c.pass?'var(--text)':'var(--muted)')+';">'+c.label+'</span></div>';
   }).join('');
 }
+
 async function loadAll(){
   document.getElementById('last-update').textContent='Loading...';
   for(var i=0;i<PAIRS.length;i++){
@@ -406,39 +450,11 @@ async function loadAll(){
     }
     if(i<PAIRS.length-1)await new Promise(function(r){setTimeout(r,10000);});
   }
-  renderJournal();
   document.getElementById('last-update').textContent='Updated '+new Date().toLocaleTimeString();
 }
-renderJournal();
+
 loadAll();
 setInterval(loadAll,15*60*1000);
-</script>
-
-<script>
-function playChaChing(){
-  var ctx=new(window.AudioContext||window.webkitAudioContext)();
-  function note(freq,start,dur,vol){
-    var o=ctx.createOscillator();
-    var g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
-    o.frequency.value=freq;o.type='triangle';
-    g.gain.setValueAtTime(0,ctx.currentTime+start);
-    g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);
-    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
-    o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+0.1);
-  }
-  note(1318,0,0.15,0.3);note(1568,0.1,0.15,0.3);note(2093,0.2,0.3,0.4);
-  note(1760,0.25,0.2,0.2);note(2349,0.35,0.5,0.5);
-}
-var _origAnalyze=analyzeAndUpdate;
-analyzeAndUpdate=function(pair,data){
-  _origAnalyze(pair,data);
-  var badge=document.getElementById('badge-'+pair);
-  if(badge){
-    var txt=badge.textContent;
-    if(txt.indexOf('LONG')!==-1||txt.indexOf('SHORT')!==-1){playChaChing();}
-  }
-};
 </script>
 </body>
 </html>
