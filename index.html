@@ -357,6 +357,13 @@ function renderBanner(alerts) {
   el.innerHTML = '<div class="alert-banner"><div style="font-size:22px">&#x1F514;</div><div class="alert-banner-text"><div class="alert-banner-title">Trade setup detected &mdash; SMS &amp; email sent</div><div class="alert-banner-sub">' + names + '</div></div><span class="alert-banner-sent">&#x2713; Sent</span></div>';
 }
 
+function ruleItem(pass, text) {
+  var icon = pass ? '&#x2705;' : '&#x274C;';
+  var cls = pass ? 'rule-pass' : 'rule-fail';
+  var tcls = pass ? 'rule-text-pass' : 'rule-text-fail';
+  return '<div class="rule-item"><span class="' + cls + '">' + icon + '</span><span class="' + tcls + '">' + text + '</span></div>';
+}
+
 function renderCard(pair, d, suppressed) {
   var price = d.price, e20 = d.ema20, e50 = d.ema50, sup = d.sup, res = d.res, dir = d.dir, score = d.score, sl = d.sl, tp = d.tp, rr = d.rr;
   var dc = pair.decimals;
@@ -392,10 +399,10 @@ function renderCard(pair, d, suppressed) {
     '<div class="sr-row"><span class="sr-left">&#x2193; Stop loss</span><span class="sr-val">' + sl.toFixed(dc) + '</span></div>' +
     '<div class="sr-row"><span class="sr-left">&#x2191; Take profit</span><span class="sr-val">' + tp.toFixed(dc) + '</span></div></div>' +
     '<div class="rule-list">' +
-    '<div class="rule-item"><span class="' + (dir !== \'FLAT\' ? \'rule-pass\' : \'rule-fail\') + '">' + (dir !== \'FLAT\' ? \'&#x2705;\' : \'&#x274C;\') + '</span><span class="' + (dir !== \'FLAT\' ? \'rule-text-pass\' : \'rule-text-fail\') + '">Rule 1 &mdash; EMA alignment (' + (dir !== \'FLAT\' ? dir : \'no direction\') + ')</span></div>' +
-    '<div class="rule-item"><span class="' + (r2 ? \'rule-pass\' : \'rule-fail\') + '">' + (r2 ? \'&#x2705;\' : \'&#x274C;\') + '</span><span class="' + (r2 ? \'rule-text-pass\' : \'rule-text-fail\') + '">Rule 2 &mdash; Price ' + (dir === \'LONG\' ? \'above\' : \'below\') + ' 20 EMA</span></div>' +
-    '<div class="rule-item"><span class="' + (r3 ? \'rule-pass\' : \'rule-fail\') + '">' + (r3 ? \'&#x2705;\' : \'&#x274C;\') + '</span><span class="' + (r3 ? \'rule-text-pass\' : \'rule-text-fail\') + '">Rule 3 &mdash; Near ' + (dir === \'LONG\' ? \'support\' : \'resistance\') + '</span></div>' +
-    '<div class="rule-item"><span class="' + (rr >= 1.5 ? \'rule-pass\' : \'rule-fail\') + '">' + (rr >= 1.5 ? \'&#x2705;\' : \'&#x274C;\') + '</span><span class="' + (rr >= 1.5 ? \'rule-text-pass\' : \'rule-text-fail\') + '">Rule 4 &mdash; R:R &ge; 1.5 (now: ' + rr.toFixed(2) + ')</span></div>' +
+    ruleItem(dir !== "FLAT", "Rule 1 — EMA alignment (" + (dir !== "FLAT" ? dir : "no direction") + ")") +
+    ruleItem(r2, "Rule 2 — Price " + (dir === "LONG" ? "above" : "below") + " 20 EMA") +
+    ruleItem(r3, "Rule 3 — Near " + (dir === "LONG" ? "support" : "resistance")) +
+    ruleItem(rr >= 1.5, "Rule 4 — R:R min 1.5 (now: " + rr.toFixed(2) + ")") +
     '</div>' +
     '<div class="card-footer"><div><div class="section-label" style="margin:0">Confluence ' + score + '/4</div><div class="score-dots">' + dots + '</div></div>' +
     '<div class="rr-block"><div class="rr-label">R:R ratio</div><div class="rr-val ' + rrClass + '">' + rr.toFixed(2) + ' : 1</div></div></div>' +
