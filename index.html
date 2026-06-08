@@ -435,10 +435,18 @@ function loadSignals() {
 function formatSheetDate(val) {
   if (!val) return '--';
   var str = val.toString();
-  var match = str.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+))?\)/);
+  var match = str.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+)(?:,(\d+))?)?\)/);
   if (match) {
-    var d = new Date(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]), parseInt(match[4]||0), parseInt(match[5]||0));
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    var mo = parseInt(match[2]);
+    var dy = parseInt(match[3]);
+    var yr = parseInt(match[1]);
+    var hr = parseInt(match[4] || 0);
+    var mn = parseInt(match[5] || 0);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var ampm = hr >= 12 ? 'PM' : 'AM';
+    var hr12 = hr % 12 || 12;
+    var mnStr = mn < 10 ? '0' + mn : '' + mn;
+    return months[mo] + ' ' + dy + ', ' + yr + ' ' + hr12 + ':' + mnStr + ' ' + ampm;
   }
   return str;
 }
