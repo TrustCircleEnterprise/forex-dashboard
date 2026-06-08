@@ -194,7 +194,7 @@ tr:hover td { background: #1a0d32; }
 var WEBHOOK = 'https://script.google.com/macros/s/AKfycbwGScbfS1VY3koSVBaMugpWiiIAlY4aa_WRp9wYrsoQykd2yMZYF1UEs2z8q1YI5lU/exec';
 var API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
 var SHEET_ID = '18C3wbnwUJQYvBw-n0iyOjI07q8-HyFryMuTPXpyQYPc';
-var ACCOUNT_SIZE = 5000;
+var ACCOUNT_SIZE = 4932.01;
 var RISK_PER_TRADE = 50;
 var DAILY_GOAL = 25;
 var DAILY_LOSS_LIMIT = 2;
@@ -432,6 +432,17 @@ function loadSignals() {
   });
 }
 
+function formatSheetDate(val) {
+  if (!val) return '--';
+  var str = val.toString();
+  var match = str.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+))?\)/);
+  if (match) {
+    var d = new Date(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]), parseInt(match[4]||0), parseInt(match[5]||0));
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+  return str;
+}
+
 function loadJournal() {
   var el = document.getElementById('journalContent');
   el.innerHTML = '<div class="loading-state">Loading trades...</div>';
@@ -448,7 +459,7 @@ function loadJournal() {
       var pnl = (c[10] && c[10].v !== null) ? '$' + parseFloat(c[10].v).toFixed(2) : '--';
       var pnlColor = pnl !== '--' ? (parseFloat(c[10].v) >= 0 ? 'color:#4cd9a0' : 'color:#f08060') : '';
       html += '<tr>' +
-        '<td>' + ((c[0] && c[0].v) ? c[0].v : '--') + '</td>' +
+        '<td>' + ((c[0] && c[0].v) ? formatSheetDate(c[0].v) : '--') + '</td>' +
         '<td>' + ((c[1] && c[1].v) ? c[1].v : '--') + '</td>' +
         '<td>' + ((c[2] && c[2].v) ? c[2].v : '--') + '</td>' +
         '<td>' + ((c[3] && c[3].v !== null) ? parseFloat(c[3].v).toFixed(3) : '--') + '</td>' +
@@ -519,7 +530,7 @@ function loadPnl() {
         '<div class="pnl-card"><div class="pnl-label">Total P&amp;L</div><div class="pnl-value ' + (totalPnl >= 0 ? 'positive' : 'negative') + '">$' + totalPnl.toFixed(2) + '</div></div>' +
         '<div class="pnl-card"><div class="pnl-label">Win rate</div><div class="pnl-value ' + (winRate >= 40 ? 'positive' : 'negative') + '">' + winRate + '%</div><div class="pnl-sub">Need 40%+ at 1.5 R:R</div></div>' +
         '<div class="pnl-card"><div class="pnl-label">Total trades</div><div class="pnl-value neutral">' + totalClosed + '</div><div class="pnl-sub">' + totalWins + 'W / ' + totalLosses + 'L</div></div>' +
-        '<div class="pnl-card"><div class="pnl-label">Account</div><div class="pnl-value positive">$' + (ACCOUNT_SIZE + totalPnl).toFixed(0) + '</div><div class="pnl-sub">Started: $' + ACCOUNT_SIZE + '</div></div>' +
+        '<div class="pnl-card"><div class="pnl-label">Account</div><div class="pnl-value positive">$' + (ACCOUNT_SIZE + totalPnl).toFixed(2) + '</div><div class="pnl-sub">Current balance</div></div>' +
       '</div>';
 
     el.innerHTML = html;
