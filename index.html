@@ -6,77 +6,77 @@
 <title>Makisha's Forex Dashboard</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0720; color: #f0e6ff; }
 .dash { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
 .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 8px; }
-.header h1 { font-size: 20px; font-weight: 600; color: #1a1a1a; }
-.header p { font-size: 13px; color: #888; margin-top: 2px; }
-.refresh-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 16px; cursor: pointer; border-radius: 8px; background: #fff; border: 1px solid #ddd; color: #1a1a1a; font-weight: 500; }
-.refresh-btn:hover { background: #f0f0f0; }
+.header h1 { font-size: 20px; font-weight: 600; color: #d4a800; }
+.header p { font-size: 13px; color: #9b7fc4; margin-top: 2px; }
+.refresh-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 16px; cursor: pointer; border-radius: 8px; background: #1e0d3a; border: 1px solid #6a3fa0; color: #f0e6ff; font-weight: 500; }
+.refresh-btn:hover { background: #2a1550; }
 .alert-banner { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 10px; background: #eaf3de; border: 1.5px solid #3b6d11; margin-bottom: 1.25rem; }
 .alert-banner-title { font-size: 14px; font-weight: 600; color: #27500a; }
 .alert-banner-sub { font-size: 12px; color: #3b6d11; margin-top: 2px; }
 .alert-banner-sent { font-size: 12px; font-weight: 600; color: #27500a; background: #c0dd97; padding: 4px 12px; border-radius: 8px; white-space: nowrap; }
 .pairs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-.pair-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 14px; padding: 1.25rem; }
-.pair-card.ready-long { border: 2px solid #1d9e75; background: #f4fcf8; }
-.pair-card.ready-short { border: 2px solid #d85a30; background: #fdf4f0; }
-.pair-card.forming { border: 2px solid #ef9f27; background: #fffbf2; }
+.pair-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 14px; padding: 1.25rem; }
+.pair-card.ready-long { border: 2px solid #1d9e75; background: #0d2820; }
+.pair-card.ready-short { border: 2px solid #d85a30; background: #2a1008; }
+.pair-card.forming { border: 2px solid #ef9f27; background: #221508; }
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
-.pair-name { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-.pair-sub { font-size: 12px; color: #888; margin-top: 2px; }
-.price-val { font-size: 22px; font-weight: 600; color: #1a1a1a; text-align: right; }
+.pair-name { font-size: 16px; font-weight: 600; color: #f0e6ff; }
+.pair-sub { font-size: 12px; color: #9b7fc4; margin-top: 2px; }
+.price-val { font-size: 22px; font-weight: 600; color: #d4a800; text-align: right; }
 .dir-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 8px; margin-top: 5px; }
-.badge-long { background: #e1f5ee; color: #085041; }
-.badge-short { background: #faece7; color: #712b13; }
-.badge-flat { background: #f0f0f0; color: #888; }
+.badge-long { background: #0d2820; color: #4cd9a0; }
+.badge-short { background: #2a1008; color: #f09070; }
+.badge-flat { background: #2a1a4e; color: #9b7fc4; }
 .status-strip { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; margin-bottom: 1rem; font-size: 13px; font-weight: 600; }
-.s-ready { background: #e1f5ee; color: #0f6e56; }
-.s-forming { background: #faeeda; color: #854f0b; }
-.s-watch { background: #f5f5f5; color: #888; }
-.section-label { font-size: 11px; font-weight: 600; color: #888; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+.s-ready { background: #0d2820; color: #4cd9a0; }
+.s-forming { background: #221508; color: #f0b030; }
+.s-watch { background: #1e0d3a; color: #9b7fc4; }
+.section-label { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
 .ema-rows { margin-bottom: 1rem; }
-.ema-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: #f9f9f9; margin-bottom: 3px; }
-.ema-left { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; }
+.ema-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: #1e0d3a; margin-bottom: 3px; }
+.ema-left { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #b89fd4; }
 .ema-dot { width: 8px; height: 8px; border-radius: 50%; }
 .dot-20 { background: #378add; }
 .dot-50 { background: #d85a30; }
-.ema-val { font-size: 13px; font-weight: 600; color: #1a1a1a; }
-.crossover-box { padding: 10px 12px; border-radius: 8px; border: 1px solid #e5e5e5; margin-bottom: 1rem; background: #fafafa; }
+.ema-val { font-size: 13px; font-weight: 600; color: #d4a800; }
+.crossover-box { padding: 10px 12px; border-radius: 8px; border: 1px solid #4a2d7a; margin-bottom: 1rem; background: #1a0d32; }
 .crossover-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .ema-pill { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-.p20 { background: #e6f1fb; color: #185fa5; }
-.p50 { background: #faece7; color: #993c1d; }
+.p20 { background: #1a1060; color: #80b0ff; }
+.p50 { background: #2a0a20; color: #d4a800; }
 .cross-signal { font-size: 13px; font-weight: 600; margin-left: 4px; }
-.bullish { color: #0f6e56; }
-.bearish { color: #993c1d; }
-.flat-sig { color: #888; }
-.cross-desc { font-size: 12px; color: #888; margin-top: 6px; }
+.bullish { color: #4cd9a0; }
+.bearish { color: #f08060; }
+.flat-sig { color: #9b7fc4; }
+.cross-desc { font-size: 12px; color: #9b7fc4; margin-top: 6px; }
 .sr-rows { margin-bottom: 1rem; }
-.sr-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+.sr-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #2d1560; }
 .sr-row:last-child { border-bottom: none; }
-.sr-left { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
+.sr-left { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #b89fd4; }
 .sr-dot-sup { width: 7px; height: 7px; border-radius: 50%; background: #1d9e75; }
 .sr-dot-res { width: 7px; height: 7px; border-radius: 50%; background: #d85a30; }
-.sr-val { font-size: 13px; font-weight: 600; color: #1a1a1a; }
-.sr-dist { font-size: 11px; color: #aaa; margin-left: 5px; font-weight: 400; }
-.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+.sr-val { font-size: 13px; font-weight: 600; color: #f0e6ff; }
+.sr-dist { font-size: 11px; color: #7050a0; margin-left: 5px; font-weight: 400; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #2d1560; }
 .score-dots { display: flex; gap: 4px; margin-top: 4px; }
-.sdot { width: 10px; height: 10px; border-radius: 50%; background: #e0e0e0; }
+.sdot { width: 10px; height: 10px; border-radius: 50%; background: #3d2060; }
 .sdot.f3 { background: #ef9f27; }
 .sdot.f4 { background: #1d9e75; }
 .rr-block { text-align: right; }
-.rr-label { font-size: 11px; color: #888; }
+.rr-label { font-size: 11px; color: #9b7fc4; }
 .rr-val { font-size: 15px; font-weight: 600; margin-top: 2px; }
-.rr-good { color: #0f6e56; }
-.rr-warn { color: #854f0b; }
-.rr-bad { color: #993c1d; }
+.rr-good { color: #4cd9a0; }
+.rr-warn { color: #f0b030; }
+.rr-bad { color: #f08060; }
 .footer-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; flex-wrap: wrap; gap: 8px; }
-.last-upd { font-size: 12px; color: #aaa; }
-.poll-status { font-size: 12px; color: #888; display: flex; align-items: center; gap: 5px; }
+.last-upd { font-size: 12px; color: #7050a0; }
+.poll-status { font-size: 12px; color: #9b7fc4; display: flex; align-items: center; gap: 5px; }
 .poll-dot { width: 7px; height: 7px; border-radius: 50%; background: #1d9e75; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.loading-state { text-align: center; padding: 2.5rem; color: #888; font-size: 14px; }
+.loading-state { text-align: center; padding: 2.5rem; color: #9b7fc4; font-size: 14px; }
 @media (max-width: 600px) { .pairs-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -202,7 +202,7 @@ function renderCard(pair, d) {
     '<div class="ema-rows">' +
     '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-20"></span>20 EMA</span><span class="ema-val">' + ema20.toFixed(dc) + '</span></div>' +
     '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-50"></span>50 EMA</span><span class="ema-val">' + ema50.toFixed(dc) + '</span></div></div>' +
-    '<div class="crossover-box"><div class="crossover-row"><span class="ema-pill p20">20 EMA</span><span style="color:#aaa;margin:0 4px">&rarr;</span><span class="ema-pill p50">50 EMA</span><span class="cross-signal ' + crossClass + '" style="margin-left:6px">' + crossLabel + '</span></div><div class="cross-desc">' + crossDesc + '</div></div>' +
+    '<div class="crossover-box"><div class="crossover-row"><span class="ema-pill p20">20 EMA</span><span style="color:#7050a0;margin:0 4px">&rarr;</span><span class="ema-pill p50">50 EMA</span><span class="cross-signal ' + crossClass + '" style="margin-left:6px">' + crossLabel + '</span></div><div class="cross-desc">' + crossDesc + '</div></div>' +
     '<div class="section-label">Support &amp; resistance</div>' +
     '<div class="sr-rows">' +
     '<div class="sr-row"><span class="sr-left"><span class="sr-dot-sup"></span>Support</span><span class="sr-val">' + sup.toFixed(dc) + '<span class="sr-dist">' + distSup + '% away</span></span></div>' +
