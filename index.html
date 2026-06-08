@@ -467,7 +467,7 @@ function loadJournal() {
       var pnl = (c[10] && c[10].v !== null) ? '$' + parseFloat(c[10].v).toFixed(2) : '--';
       var pnlColor = pnl !== '--' ? (parseFloat(c[10].v) >= 0 ? 'color:#4cd9a0' : 'color:#f08060') : '';
       html += '<tr>' +
-        '<td>' + ((c[0] && c[0].v) ? formatSheetDate(c[0].v) : '--') + '</td>' +
+        '<td>' + ((c[0] && c[0].f) ? c[0].f : (c[0] && c[0].v) ? formatSheetDate(c[0].v) : '--') + '</td>' +
         '<td>' + ((c[1] && c[1].v) ? c[1].v : '--') + '</td>' +
         '<td>' + ((c[2] && c[2].v) ? c[2].v : '--') + '</td>' +
         '<td>' + ((c[3] && c[3].v !== null) ? parseFloat(c[3].v).toFixed(3) : '--') + '</td>' +
