@@ -7,23 +7,44 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0720; color: #f0e6ff; }
-.dash { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
+.dash { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem; }
 .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 8px; }
 .header h1 { font-size: 20px; font-weight: 600; color: #d4a800; }
 .header p { font-size: 13px; color: #9b7fc4; margin-top: 2px; }
 .refresh-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 16px; cursor: pointer; border-radius: 8px; background: #1e0d3a; border: 1px solid #6a3fa0; color: #f0e6ff; font-weight: 500; }
 .refresh-btn:hover { background: #2a1550; }
-.alert-banner { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 10px; background: #0d2820; border: 1.5px solid #1d9e75; margin-bottom: 1.25rem; }
-.alert-banner-title { font-size: 14px; font-weight: 600; color: #4cd9a0; }
-.alert-banner-sub { font-size: 12px; color: #1d9e75; margin-top: 2px; }
-.alert-banner-sent { font-size: 12px; font-weight: 600; color: #4cd9a0; background: #0a3020; padding: 4px 12px; border-radius: 8px; white-space: nowrap; border: 1px solid #1d9e75; }
-/* NEWS SECTION */
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 1.25rem; border-bottom: 1px solid #2d1560; padding-bottom: 0; }
+.tab { font-size: 13px; font-weight: 600; padding: 8px 16px; cursor: pointer; border-radius: 8px 8px 0 0; color: #9b7fc4; background: transparent; border: none; }
+.tab.active { color: #d4a800; background: #1e0d3a; border: 1px solid #2d1560; border-bottom: 1px solid #1e0d3a; margin-bottom: -1px; }
+.tab:hover:not(.active) { color: #f0e6ff; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+/* PNL TRACKER */
+.pnl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
+.pnl-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 10px; padding: 14px; }
+.pnl-card.goal-hit { border-color: #1d9e75; background: #0d2820; }
+.pnl-card.limit-hit { border-color: #d85a30; background: #2a1008; }
+.pnl-label { font-size: 11px; font-weight: 600; color: #9b7fc4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.pnl-value { font-size: 22px; font-weight: 600; color: #d4a800; }
+.pnl-value.positive { color: #4cd9a0; }
+.pnl-value.negative { color: #f08060; }
+.pnl-value.neutral { color: #f0e6ff; }
+.pnl-sub { font-size: 11px; color: #9b7fc4; margin-top: 3px; }
+.pnl-status { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 8px; margin-bottom: 1.25rem; font-size: 13px; font-weight: 600; }
+.pnl-status.goal { background: #0d2820; color: #4cd9a0; }
+.pnl-status.limit { background: #2a1008; color: #f08060; }
+.pnl-status.neutral { background: #1e0d3a; color: #9b7fc4; }
+/* NEWS */
 .news-section { margin-bottom: 1.25rem; }
 .news-section-title { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
 .news-warning { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; background: #2a1508; border: 1.5px solid #ef9f27; margin-bottom: 8px; }
 .news-warning-title { font-size: 13px; font-weight: 600; color: #f0b030; }
 .news-warning-sub { font-size: 12px; color: #c87820; margin-top: 2px; }
-.news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.news-suppressed { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; background: #2a0808; border: 1.5px solid #d85a30; margin-bottom: 8px; }
+.news-suppressed-title { font-size: 13px; font-weight: 600; color: #f08060; }
+.news-suppressed-sub { font-size: 12px; color: #c84040; margin-top: 2px; }
+.news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 8px; }
 .news-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 10px; padding: 12px 14px; }
 .news-card.upcoming { border-color: #d4a800; background: #1a1200; }
 .news-card-label { font-size: 10px; font-weight: 600; color: #9b7fc4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
@@ -33,12 +54,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .news-card-countdown { font-size: 13px; font-weight: 600; color: #d4a800; margin-top: 4px; }
 .news-ff-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #9b7fc4; text-decoration: none; padding: 6px 12px; border: 1px solid #4a2d7a; border-radius: 8px; background: #180d30; }
 .news-ff-link:hover { border-color: #d4a800; color: #d4a800; }
+/* ALERT BANNER */
+.alert-banner { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 10px; background: #0d2820; border: 1.5px solid #1d9e75; margin-bottom: 1.25rem; }
+.alert-banner-title { font-size: 14px; font-weight: 600; color: #4cd9a0; }
+.alert-banner-sub { font-size: 12px; color: #1d9e75; margin-top: 2px; }
+.alert-banner-sent { font-size: 12px; font-weight: 600; color: #4cd9a0; background: #0a3020; padding: 4px 12px; border-radius: 8px; white-space: nowrap; border: 1px solid #1d9e75; }
 /* PAIRS */
 .pairs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .pair-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 14px; padding: 1.25rem; }
 .pair-card.ready-long { border: 2px solid #1d9e75; background: #0d2820; }
 .pair-card.ready-short { border: 2px solid #d85a30; background: #2a1008; }
 .pair-card.forming { border: 2px solid #ef9f27; background: #221508; }
+.pair-card.suppressed { border: 2px solid #6a3fa0; opacity: 0.75; }
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
 .pair-name { font-size: 16px; font-weight: 600; color: #f0e6ff; }
 .pair-sub { font-size: 12px; color: #9b7fc4; margin-top: 2px; }
@@ -51,6 +78,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .s-ready { background: #0d2820; color: #4cd9a0; }
 .s-forming { background: #221508; color: #f0b030; }
 .s-watch { background: #1e0d3a; color: #9b7fc4; }
+.s-suppressed { background: #1a0a2a; color: #7050a0; }
 .section-label { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
 .ema-rows { margin-bottom: 1rem; }
 .ema-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: #1e0d3a; margin-bottom: 3px; }
@@ -88,13 +116,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .rr-good { color: #4cd9a0; }
 .rr-warn { color: #f0b030; }
 .rr-bad { color: #f08060; }
+/* JOURNAL */
+.journal-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid #4a2d7a; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: #1e0d3a; }
+th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #9b7fc4; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+td { padding: 10px 12px; border-top: 1px solid #2d1560; color: #f0e6ff; white-space: nowrap; }
+tr:hover td { background: #1a0d32; }
+.status-open { background: #1a1060; color: #80b0ff; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.status-win { background: #0d2820; color: #4cd9a0; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.status-loss { background: #2a1008; color: #f08060; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.journal-empty { text-align: center; padding: 2rem; color: #9b7fc4; font-size: 14px; }
+.journal-error { text-align: center; padding: 2rem; color: #f08060; font-size: 13px; }
+/* FOOTER */
 .footer-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; flex-wrap: wrap; gap: 8px; }
 .last-upd { font-size: 12px; color: #7050a0; }
 .poll-status { font-size: 12px; color: #9b7fc4; display: flex; align-items: center; gap: 5px; }
 .poll-dot { width: 7px; height: 7px; border-radius: 50%; background: #1d9e75; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .loading-state { text-align: center; padding: 2.5rem; color: #9b7fc4; font-size: 14px; }
-@media (max-width: 600px) { .pairs-grid { grid-template-columns: 1fr; } .news-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .pairs-grid { grid-template-columns: 1fr; } .news-grid { grid-template-columns: 1fr 1fr; } .pnl-grid { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
@@ -104,37 +145,65 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <h1>Makisha's Forex Dashboard</h1>
       <p>EMA crossover · S/R levels · Auto alerts · 1H candles</p>
     </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="loadData()">&#x21BB; Refresh</button>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">&#x21BB; Refresh</button>
   </div>
 
-  <!-- NEWS SECTION -->
-  <div class="news-section">
-    <div class="news-section-title">&#x1F4C5; High-impact economic events</div>
-    <div id="newsWarning"></div>
-    <div class="news-grid" id="newsGrid"></div>
-    <a href="https://www.forexfactory.com/calendar" target="_blank" class="news-ff-link">&#x1F517; View full calendar on Forex Factory</a>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('signals')">&#x1F4C8; Signals</button>
+    <button class="tab" onclick="showTab('journal')">&#x1F4D3; Journal</button>
+    <button class="tab" onclick="showTab('pnl')">&#x1F4B0; Daily P&amp;L</button>
   </div>
 
-  <div id="alertBanner"></div>
-  <div class="pairs-grid" id="pairsGrid">
-    <div class="loading-state">Fetching live data...</div>
+  <!-- SIGNALS TAB -->
+  <div class="tab-content active" id="tab-signals">
+    <div class="news-section">
+      <div class="news-section-title">&#x1F4C5; High-impact economic events</div>
+      <div id="newsWarning"></div>
+      <div id="newsSuppressed"></div>
+      <div class="news-grid" id="newsGrid"></div>
+      <a href="https://www.forexfactory.com/calendar" target="_blank" class="news-ff-link">&#x1F517; View full calendar on Forex Factory</a>
+    </div>
+    <div id="alertBanner"></div>
+    <div class="pairs-grid" id="pairsGrid">
+      <div class="loading-state">Fetching live data...</div>
+    </div>
   </div>
+
+  <!-- JOURNAL TAB -->
+  <div class="tab-content" id="tab-journal">
+    <div id="journalContent">
+      <div class="loading-state">Loading trade journal...</div>
+    </div>
+  </div>
+
+  <!-- PNL TAB -->
+  <div class="tab-content" id="tab-pnl">
+    <div id="pnlContent">
+      <div class="loading-state">Loading P&amp;L data...</div>
+    </div>
+  </div>
+
   <div class="footer-bar">
     <div class="last-upd" id="lastUpd"></div>
     <div class="poll-status"><div class="poll-dot"></div> Auto-refreshing every 5 min</div>
   </div>
 </div>
+
 <script>
 var WEBHOOK = 'https://script.google.com/macros/s/AKfycbwGScbfS1VY3koSVBaMugpWiiIAlY4aa_WRp9wYrsoQykd2yMZYF1UEs2z8q1YI5lU/exec';
 var API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
+var SHEET_ID = '18C3wbnwUJQYvBw-n0iyOjI07q8-HyFryMuTPXpyQYPc';
+var ACCOUNT_SIZE = 5000;
+var RISK_PER_TRADE = 50;
+var DAILY_GOAL = 25;
+var DAILY_LOSS_LIMIT = 2;
 var PAIRS = [
   { symbol: 'GBP/JPY', name: 'GBPJPY', decimals: 3 },
   { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 }
 ];
 var sentCache = {};
 
-// High-impact events schedule (EST) — update monthly
-// Format: { name, desc, date: 'YYYY-MM-DD', time: 'HH:MM', currency }
 var EVENTS = [
   { name: 'NFP', desc: 'US Non-Farm Payrolls', date: '2026-06-06', time: '08:30', currency: 'USD' },
   { name: 'CPI', desc: 'US Consumer Price Index', date: '2026-06-11', time: '08:30', currency: 'USD' },
@@ -144,7 +213,18 @@ var EVENTS = [
   { name: 'CPI', desc: 'US Consumer Price Index', date: '2026-07-15', time: '08:30', currency: 'USD' },
   { name: 'FOMC', desc: 'Fed Interest Rate Decision', date: '2026-07-29', time: '14:00', currency: 'USD' },
   { name: 'BoE Rate', desc: 'Bank of England Decision', date: '2026-08-06', time: '07:00', currency: 'GBP' },
+  { name: 'NFP', desc: 'US Non-Farm Payrolls', date: '2026-08-07', time: '08:30', currency: 'USD' },
+  { name: 'CPI', desc: 'US Consumer Price Index', date: '2026-08-12', time: '08:30', currency: 'USD' },
 ];
+
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'journal') loadJournal();
+  if (name === 'pnl') loadPnl();
+}
 
 function getEventDateTime(ev) {
   return new Date(ev.date + 'T' + ev.time + ':00-05:00');
@@ -159,29 +239,49 @@ function formatCountdown(ms) {
   return m + 'm away';
 }
 
-function renderNews() {
+function isNewsSuppressed() {
   var now = new Date();
-  var upcoming = EVENTS.map(function(ev) {
+  var window30 = 30 * 60 * 1000;
+  return EVENTS.some(function(ev) {
+    var dt = getEventDateTime(ev);
+    var diff = dt - now;
+    return diff > -window30 && diff < window30;
+  });
+}
+
+function getUpcomingEvents() {
+  var now = new Date();
+  return EVENTS.map(function(ev) {
     var dt = getEventDateTime(ev);
     return { ev: ev, dt: dt, ms: dt - now };
   }).filter(function(x) { return x.ms > -3600000; })
     .sort(function(a, b) { return a.ms - b.ms; });
+}
 
-  // Warning if event within 24 hours
+function renderNews() {
+  var now = new Date();
+  var upcoming = getUpcomingEvents();
+  var suppressed = isNewsSuppressed();
   var warn = upcoming.find(function(x) { return x.ms > 0 && x.ms < 24 * 3600000; });
+
   var warnEl = document.getElementById('newsWarning');
-  if (warn) {
+  var suppEl = document.getElementById('newsSuppressed');
+
+  if (suppressed) {
+    suppEl.innerHTML = '<div class="news-suppressed"><div style="font-size:20px">&#x1F6AB;</div><div><div class="news-suppressed-title">Alerts suppressed — high-impact event within 30 minutes</div><div class="news-suppressed-sub">Trade signals will not fire during this window. Wait for the event to pass.</div></div></div>';
+    warnEl.innerHTML = '';
+  } else if (warn) {
     warnEl.innerHTML = '<div class="news-warning"><div style="font-size:20px">&#x26A0;&#xFE0F;</div><div><div class="news-warning-title">High-impact event within 24 hours — use caution</div><div class="news-warning-sub">' + warn.ev.name + ' (' + warn.ev.currency + ') &mdash; ' + warn.ev.desc + ' &mdash; ' + formatCountdown(warn.ms) + '</div></div></div>';
+    suppEl.innerHTML = '';
   } else {
     warnEl.innerHTML = '';
+    suppEl.innerHTML = '';
   }
 
-  // Show next 4 events
   var show = upcoming.slice(0, 4);
   var html = show.map(function(x, i) {
-    var dt = x.dt;
-    var dateStr = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
-    var timeStr = dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York' }) + ' EST';
+    var dateStr = x.dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+    var timeStr = x.dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York' }) + ' EST';
     var isNext = i === 0;
     return '<div class="news-card' + (isNext ? ' upcoming' : '') + '">' +
       '<div class="news-card-label">' + x.ev.currency + (isNext ? ' &mdash; Next event' : '') + '</div>' +
@@ -190,40 +290,33 @@ function renderNews() {
       (isNext ? '<div class="news-card-countdown">' + formatCountdown(x.ms) + '</div>' : '') +
     '</div>';
   }).join('');
-
   document.getElementById('newsGrid').innerHTML = html;
 }
 
 function calcEMA(prices, period) {
-  var k = 2 / (period + 1);
-  var e = 0;
+  var k = 2 / (period + 1), e = 0;
   for (var i = 0; i < period; i++) e += prices[i];
-  e = e / period;
+  e /= period;
   for (var i = period; i < prices.length; i++) e = prices[i] * k + e * (1 - k);
   return e;
 }
 
 function autoSR(candles) {
   var sup = Infinity, res = -Infinity;
-  for (var i = 0; i < candles.length; i++) {
-    if (candles[i].low < sup) sup = candles[i].low;
-    if (candles[i].high > res) res = candles[i].high;
-  }
+  candles.forEach(function(c) { if (c.low < sup) sup = c.low; if (c.high > res) res = c.high; });
   return { sup: sup, res: res };
 }
 
-function getDir(ema20, ema50) {
-  var diff = ((ema20 - ema50) / ema50) * 100;
-  if (diff > 0.01) return 'LONG';
-  if (diff < -0.01) return 'SHORT';
-  return 'FLAT';
+function getDir(e20, e50) {
+  var d = ((e20 - e50) / e50) * 100;
+  return d > 0.01 ? 'LONG' : d < -0.01 ? 'SHORT' : 'FLAT';
 }
 
-function getScore(price, ema20, ema50, sup, res, dir) {
+function getScore(price, e20, e50, sup, res, dir) {
   var s = 0;
   if (dir !== 'FLAT') s++;
-  if (dir === 'LONG' && price > ema20) s++;
-  if (dir === 'SHORT' && price < ema20) s++;
+  if (dir === 'LONG' && price > e20) s++;
+  if (dir === 'SHORT' && price < e20) s++;
   var prox = (res - sup) * 0.015;
   if (s >= 2) {
     if (dir === 'LONG' && Math.abs(price - sup) < prox) s++;
@@ -245,11 +338,11 @@ function fetchCandles(symbol) {
 function fireWebhook(pair, signal) {
   var key = pair + '_' + signal.direction + '_' + signal.score;
   if (sentCache[key]) return Promise.resolve(false);
+  if (isNewsSuppressed()) return Promise.resolve(false);
   sentCache[key] = true;
   setTimeout(function() { delete sentCache[key]; }, 4 * 60 * 60 * 1000);
   return fetch(WEBHOOK, {
-    method: 'POST',
-    mode: 'no-cors',
+    method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ pair: pair, direction: signal.direction, price: signal.price, sl: signal.sl, tp: signal.tp, rr: signal.rr, score: signal.score })
   }).then(function() { return true; }).catch(function() { return false; });
@@ -262,14 +355,14 @@ function renderBanner(alerts) {
   el.innerHTML = '<div class="alert-banner"><div style="font-size:22px">&#x1F514;</div><div class="alert-banner-text"><div class="alert-banner-title">Trade setup detected &mdash; SMS &amp; email sent</div><div class="alert-banner-sub">' + names + '</div></div><span class="alert-banner-sent">&#x2713; Sent</span></div>';
 }
 
-function renderCard(pair, d) {
-  var price = d.price, ema20 = d.ema20, ema50 = d.ema50, sup = d.sup, res = d.res, dir = d.dir, score = d.score, sl = d.sl, tp = d.tp, rr = d.rr;
+function renderCard(pair, d, suppressed) {
+  var price = d.price, e20 = d.ema20, e50 = d.ema50, sup = d.sup, res = d.res, dir = d.dir, score = d.score, sl = d.sl, tp = d.tp, rr = d.rr;
   var dc = pair.decimals;
-  var isReady = score >= 3 && rr >= 1.5;
+  var isReady = score >= 3 && rr >= 1.5 && !suppressed;
   var isForming = score >= 2 && !isReady;
-  var cardClass = isReady ? (dir === 'LONG' ? 'ready-long' : 'ready-short') : isForming ? 'forming' : '';
-  var stripClass = isReady ? 's-ready' : isForming ? 's-forming' : 's-watch';
-  var stripText = isReady ? (score === 4 ? '&#x2713; 4/4 &mdash; Strong signal &middot; Alert sent' : '&#x2713; 3/4 &mdash; Good setup &middot; Alert sent') : isForming ? '&#x26A0; ' + score + '/4 &mdash; Setup forming, keep watching' : '&#x25CF; ' + score + '/4 &mdash; Watching';
+  var cardClass = suppressed ? 'suppressed' : isReady ? (dir === 'LONG' ? 'ready-long' : 'ready-short') : isForming ? 'forming' : '';
+  var stripClass = suppressed ? 's-suppressed' : isReady ? 's-ready' : isForming ? 's-forming' : 's-watch';
+  var stripText = suppressed ? '&#x1F6AB; Alerts suppressed &mdash; news event window' : isReady ? (score === 4 ? '&#x2713; 4/4 &mdash; Strong signal &middot; Alert sent' : '&#x2713; 3/4 &mdash; Good setup &middot; Alert sent') : isForming ? '&#x26A0; ' + score + '/4 &mdash; Setup forming, keep watching' : '&#x25CF; ' + score + '/4 &mdash; Watching';
   var dirClass = dir === 'LONG' ? 'badge-long' : dir === 'SHORT' ? 'badge-short' : 'badge-flat';
   var crossClass = dir === 'LONG' ? 'bullish' : dir === 'SHORT' ? 'bearish' : 'flat-sig';
   var crossLabel = dir === 'LONG' ? '&#x2191; above' : dir === 'SHORT' ? '&#x2193; below' : '&mdash; flat';
@@ -286,13 +379,11 @@ function renderCard(pair, d) {
     '<div><div class="price-val">' + price.toFixed(dc) + '</div><div><span class="dir-badge ' + dirClass + '">' + dirArrow + ' ' + dir + '</span></div></div></div>' +
     '<div class="status-strip ' + stripClass + '">' + stripText + '</div>' +
     '<div class="section-label">EMA levels</div>' +
-    '<div class="ema-rows">' +
-    '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-20"></span>20 EMA</span><span class="ema-val">' + ema20.toFixed(dc) + '</span></div>' +
-    '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-50"></span>50 EMA</span><span class="ema-val">' + ema50.toFixed(dc) + '</span></div></div>' +
+    '<div class="ema-rows"><div class="ema-row"><span class="ema-left"><span class="ema-dot dot-20"></span>20 EMA</span><span class="ema-val">' + e20.toFixed(dc) + '</span></div>' +
+    '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-50"></span>50 EMA</span><span class="ema-val">' + e50.toFixed(dc) + '</span></div></div>' +
     '<div class="crossover-box"><div class="crossover-row"><span class="ema-pill p20">20 EMA</span><span style="color:#7050a0;margin:0 4px">&rarr;</span><span class="ema-pill p50">50 EMA</span><span class="cross-signal ' + crossClass + '" style="margin-left:6px">' + crossLabel + '</span></div><div class="cross-desc">' + crossDesc + '</div></div>' +
     '<div class="section-label">Support &amp; resistance</div>' +
-    '<div class="sr-rows">' +
-    '<div class="sr-row"><span class="sr-left"><span class="sr-dot-sup"></span>Support</span><span class="sr-val">' + sup.toFixed(dc) + '<span class="sr-dist">' + distSup + '% away</span></span></div>' +
+    '<div class="sr-rows"><div class="sr-row"><span class="sr-left"><span class="sr-dot-sup"></span>Support</span><span class="sr-val">' + sup.toFixed(dc) + '<span class="sr-dist">' + distSup + '% away</span></span></div>' +
     '<div class="sr-row"><span class="sr-left"><span class="sr-dot-res"></span>Resistance</span><span class="sr-val">' + res.toFixed(dc) + '<span class="sr-dist">' + distRes + '% away</span></span></div>' +
     '<div class="sr-row"><span class="sr-left">&#x2193; Stop loss</span><span class="sr-val">' + sl.toFixed(dc) + '</span></div>' +
     '<div class="sr-row"><span class="sr-left">&#x2191; Take profit</span><span class="sr-val">' + tp.toFixed(dc) + '</span></div></div>' +
@@ -300,34 +391,29 @@ function renderCard(pair, d) {
     '<div class="rr-block"><div class="rr-label">R:R ratio</div><div class="rr-val ' + rrClass + '">' + rr.toFixed(2) + ' : 1</div></div></div></div>';
 }
 
-function loadData() {
-  var btn = document.getElementById('refreshBtn');
-  btn.textContent = 'Loading...';
-  renderNews();
-
+function loadSignals() {
   var promises = PAIRS.map(function(pair) {
     return fetchCandles(pair.symbol).then(function(candles) {
       if (!candles || candles.length < 60) return { pair: pair, error: true };
       var closes = candles.map(function(c) { return c.close; });
       var price = closes[closes.length - 1];
-      var ema20 = calcEMA(closes, 20);
-      var ema50 = calcEMA(closes, 50);
+      var ema20 = calcEMA(closes, 20), ema50 = calcEMA(closes, 50);
       var sr = autoSR(candles);
-      var sup = sr.sup, res = sr.res;
       var dir = getDir(ema20, ema50);
-      var score = getScore(price, ema20, ema50, sup, res, dir);
-      var sl = dir === 'LONG' ? sup * 0.999 : res * 1.001;
-      var tp = dir === 'LONG' ? res * 0.999 : sup * 1.001;
-      var risk = Math.abs(price - sl);
-      var reward = Math.abs(tp - price);
+      var score = getScore(price, ema20, ema50, sr.sup, sr.res, dir);
+      var sl = dir === 'LONG' ? sr.sup * 0.999 : sr.res * 1.001;
+      var tp = dir === 'LONG' ? sr.res * 0.999 : sr.sup * 1.001;
+      var risk = Math.abs(price - sl), reward = Math.abs(tp - price);
       var rr = risk > 0 ? reward / risk : 0;
-      return { pair: pair, data: { price: price, ema20: ema20, ema50: ema50, sup: sup, res: res, dir: dir, score: score, sl: sl, tp: tp, rr: rr } };
+      return { pair: pair, data: { price: price, ema20: ema20, ema50: ema50, sup: sr.sup, res: sr.res, dir: dir, score: score, sl: sl, tp: tp, rr: rr } };
     });
   });
 
+  var suppressed = isNewsSuppressed();
+
   Promise.all(promises).then(function(results) {
     var alertPromises = results.map(function(r) {
-      if (!r.error && r.data.score >= 3 && r.data.rr >= 1.5) {
+      if (!r.error && r.data.score >= 3 && r.data.rr >= 1.5 && !suppressed) {
         return fireWebhook(r.pair.name, { direction: r.data.dir, price: r.data.price, sl: r.data.sl, tp: r.data.tp, rr: r.data.rr, score: r.data.score }).then(function(sent) {
           return sent ? { pair: r.pair.symbol, direction: r.data.dir } : null;
         });
@@ -339,17 +425,120 @@ function loadData() {
       var alerts = alertResults.filter(function(a) { return a !== null; });
       renderBanner(alerts);
       var html = results.map(function(r) {
-        return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.pair.symbol + '</div></div>' : renderCard(r.pair, r.data);
+        return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.pair.symbol + '</div></div>' : renderCard(r.pair, r.data, suppressed);
       }).join('');
       document.getElementById('pairsGrid').innerHTML = html;
-      document.getElementById('lastUpd').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
-      btn.textContent = '\u21BB Refresh';
     });
   });
 }
 
-loadData();
-setInterval(loadData, 5 * 60 * 1000);
+function loadJournal() {
+  var el = document.getElementById('journalContent');
+  el.innerHTML = '<div class="loading-state">Loading trades...</div>';
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Sheet1';
+  fetch(url).then(function(r) { return r.text(); }).then(function(text) {
+    var json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
+    var rows = json.table.rows;
+    if (!rows || !rows.length) { el.innerHTML = '<div class="journal-empty">No trades logged yet.</div>'; return; }
+    var html = '<div class="journal-table-wrap"><table><thead><tr><th>Date/Time</th><th>Pair</th><th>Dir</th><th>Entry</th><th>SL</th><th>TP</th><th>R:R</th><th>Score</th><th>Status</th><th>P&amp;L</th></tr></thead><tbody>';
+    rows.forEach(function(row) {
+      var c = row.c;
+      var status = (c[9] && c[9].v) ? c[9].v.toString().toUpperCase() : '';
+      var statusClass = status === 'WIN' ? 'status-win' : status === 'LOSS' ? 'status-loss' : 'status-open';
+      var pnl = (c[10] && c[10].v !== null) ? '$' + parseFloat(c[10].v).toFixed(2) : '--';
+      var pnlColor = pnl !== '--' ? (parseFloat(c[10].v) >= 0 ? 'color:#4cd9a0' : 'color:#f08060') : '';
+      html += '<tr>' +
+        '<td>' + ((c[0] && c[0].v) ? c[0].v : '--') + '</td>' +
+        '<td>' + ((c[1] && c[1].v) ? c[1].v : '--') + '</td>' +
+        '<td>' + ((c[2] && c[2].v) ? c[2].v : '--') + '</td>' +
+        '<td>' + ((c[3] && c[3].v !== null) ? parseFloat(c[3].v).toFixed(3) : '--') + '</td>' +
+        '<td>' + ((c[4] && c[4].v !== null) ? parseFloat(c[4].v).toFixed(3) : '--') + '</td>' +
+        '<td>' + ((c[5] && c[5].v !== null) ? parseFloat(c[5].v).toFixed(3) : '--') + '</td>' +
+        '<td>' + ((c[6] && c[6].v !== null) ? parseFloat(c[6].v).toFixed(2) : '--') + '</td>' +
+        '<td>' + ((c[7] && c[7].v !== null) ? c[7].v + '/4' : '--') + '</td>' +
+        '<td><span class="' + statusClass + '">' + (status || 'OPEN') + '</span></td>' +
+        '<td style="' + pnlColor + '">' + pnl + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table></div>';
+    el.innerHTML = html;
+  }).catch(function() {
+    el.innerHTML = '<div class="journal-error">Could not load journal. Make sure the Google Sheet is set to public.</div>';
+  });
+}
+
+function loadPnl() {
+  var el = document.getElementById('pnlContent');
+  el.innerHTML = '<div class="loading-state">Loading P&amp;L data...</div>';
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Sheet1';
+  fetch(url).then(function(r) { return r.text(); }).then(function(text) {
+    var json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
+    var rows = json.table.rows;
+    var today = new Date().toLocaleDateString('en-US');
+    var todayTrades = [], allTrades = [];
+
+    rows.forEach(function(row) {
+      var c = row.c;
+      var status = (c[9] && c[9].v) ? c[9].v.toString().toUpperCase() : '';
+      var pnl = (c[10] && c[10].v !== null) ? parseFloat(c[10].v) : 0;
+      var dateStr = (c[0] && c[0].v) ? c[0].v.toString() : '';
+      allTrades.push({ status: status, pnl: pnl, date: dateStr });
+      if (dateStr.indexOf(today.split('/')[0]) !== -1 || dateStr.indexOf(new Date().getMonth() + 1) !== -1) {
+        var tradeDate = new Date(dateStr);
+        var nowDate = new Date();
+        if (tradeDate.toDateString() === nowDate.toDateString()) {
+          todayTrades.push({ status: status, pnl: pnl });
+        }
+      }
+    });
+
+    var todayPnl = todayTrades.reduce(function(sum, t) { return sum + t.pnl; }, 0);
+    var todayWins = todayTrades.filter(function(t) { return t.status === 'WIN'; }).length;
+    var todayLosses = todayTrades.filter(function(t) { return t.status === 'LOSS'; }).length;
+    var totalPnl = allTrades.reduce(function(sum, t) { return sum + t.pnl; }, 0);
+    var totalWins = allTrades.filter(function(t) { return t.status === 'WIN'; }).length;
+    var totalLosses = allTrades.filter(function(t) { return t.status === 'LOSS'; }).length;
+    var totalClosed = totalWins + totalLosses;
+    var winRate = totalClosed > 0 ? Math.round((totalWins / totalClosed) * 100) : 0;
+    var goalHit = todayPnl >= DAILY_GOAL;
+    var limitHit = todayLosses >= DAILY_LOSS_LIMIT;
+
+    var statusClass = goalHit ? 'goal' : limitHit ? 'limit' : 'neutral';
+    var statusText = goalHit ? '&#x1F3C6; Daily goal reached! Great trading today.' : limitHit ? '&#x1F6D1; 2-loss limit hit &mdash; stop trading for today.' : '&#x1F4C8; Keep going &mdash; $' + Math.max(0, DAILY_GOAL - todayPnl).toFixed(2) + ' to reach daily goal.';
+
+    var html = '<div class="pnl-status ' + statusClass + '">' + statusText + '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:#9b7fc4;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Today</div>' +
+      '<div class="pnl-grid">' +
+        '<div class="pnl-card' + (goalHit ? ' goal-hit' : '') + '"><div class="pnl-label">Today P&amp;L</div><div class="pnl-value ' + (todayPnl >= 0 ? 'positive' : 'negative') + '">$' + todayPnl.toFixed(2) + '</div><div class="pnl-sub">Goal: $' + DAILY_GOAL + '</div></div>' +
+        '<div class="pnl-card"><div class="pnl-label">Trades today</div><div class="pnl-value neutral">' + todayTrades.length + '</div><div class="pnl-sub">' + todayWins + 'W / ' + todayLosses + 'L</div></div>' +
+        '<div class="pnl-card' + (limitHit ? ' limit-hit' : '') + '"><div class="pnl-label">Losses today</div><div class="pnl-value ' + (limitHit ? 'negative' : 'neutral') + '">' + todayLosses + '</div><div class="pnl-sub">Limit: ' + DAILY_LOSS_LIMIT + '</div></div>' +
+        '<div class="pnl-card"><div class="pnl-label">Risk used</div><div class="pnl-value neutral">$' + (todayTrades.length * RISK_PER_TRADE).toFixed(0) + '</div><div class="pnl-sub">$' + RISK_PER_TRADE + ' per trade</div></div>' +
+      '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:#9b7fc4;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;margin-top:1.25rem">All time</div>' +
+      '<div class="pnl-grid">' +
+        '<div class="pnl-card"><div class="pnl-label">Total P&amp;L</div><div class="pnl-value ' + (totalPnl >= 0 ? 'positive' : 'negative') + '">$' + totalPnl.toFixed(2) + '</div></div>' +
+        '<div class="pnl-card"><div class="pnl-label">Win rate</div><div class="pnl-value ' + (winRate >= 40 ? 'positive' : 'negative') + '">' + winRate + '%</div><div class="pnl-sub">Need 40%+ at 1.5 R:R</div></div>' +
+        '<div class="pnl-card"><div class="pnl-label">Total trades</div><div class="pnl-value neutral">' + totalClosed + '</div><div class="pnl-sub">' + totalWins + 'W / ' + totalLosses + 'L</div></div>' +
+        '<div class="pnl-card"><div class="pnl-label">Account</div><div class="pnl-value positive">$' + (ACCOUNT_SIZE + totalPnl).toFixed(0) + '</div><div class="pnl-sub">Started: $' + ACCOUNT_SIZE + '</div></div>' +
+      '</div>';
+
+    el.innerHTML = html;
+  }).catch(function() {
+    el.innerHTML = '<div class="journal-error">Could not load P&amp;L data. Make sure the Google Sheet is set to public.</div>';
+  });
+}
+
+function loadAll() {
+  var btn = document.getElementById('refreshBtn');
+  btn.textContent = 'Loading...';
+  renderNews();
+  loadSignals();
+  document.getElementById('lastUpd').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+  btn.textContent = '\u21BB Refresh';
+}
+
+loadAll();
+setInterval(loadAll, 5 * 60 * 1000);
 setInterval(renderNews, 60 * 1000);
 </script>
 </body>
