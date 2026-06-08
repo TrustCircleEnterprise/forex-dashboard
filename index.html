@@ -264,6 +264,7 @@ function renderNews() {
   var now = new Date();
   var upcoming = getUpcomingEvents();
   var suppressed = isNewsSuppressed();
+  var xauVolatile = isXAUVolatileWindow();
   var warn = upcoming.find(function(x) { return x.ms > 0 && x.ms < 24 * 3600000; });
 
   var warnEl = document.getElementById('newsWarning');
@@ -357,6 +358,16 @@ function renderBanner(alerts) {
   el.innerHTML = '<div class="alert-banner"><div style="font-size:22px">&#x1F514;</div><div class="alert-banner-text"><div class="alert-banner-title">Trade setup detected &mdash; SMS &amp; email sent</div><div class="alert-banner-sub">' + names + '</div></div><span class="alert-banner-sent">&#x2713; Sent</span></div>';
 }
 
+function isXAUVolatileWindow() {
+  var now = new Date();
+  var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+  var hour = est.getHours();
+  var day = est.getDay();
+  if (hour === 6) return true;
+  if (hour === 18 && day >= 0 && day <= 5) return true;
+  return false;
+}
+
 function ruleItem(pass, text) {
   var icon = pass ? '&#x2705;' : '&#x274C;';
   var cls = pass ? 'rule-pass' : 'rule-fail';
@@ -429,10 +440,12 @@ function loadSignals() {
   });
 
   var suppressed = isNewsSuppressed();
+  var xauVolatile = isXAUVolatileWindow();
 
   Promise.all(promises).then(function(results) {
     var alertPromises = results.map(function(r) {
-      if (!r.error && r.data.score >= 3 && r.data.rr >= 1.5 && !suppressed) {
+      var pairBlocked = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile);
+      if (!r.error && r.data.score >= 3 && r.data.rr >= 1.5 && !pairBlocked) {
         return fireWebhook(r.pair.name, { direction: r.data.dir, price: r.data.price, sl: r.data.sl, tp: r.data.tp, rr: r.data.rr, score: r.data.score }).then(function(sent) {
           return sent ? { pair: r.pair.symbol, direction: r.data.dir } : null;
         });
@@ -444,7 +457,8 @@ function loadSignals() {
       var alerts = alertResults.filter(function(a) { return a !== null; });
       renderBanner(alerts);
       var html = results.map(function(r) {
-        return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.pair.symbol + '</div></div>' : renderCard(r.pair, r.data, suppressed);
+        var pairSuppressed = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile);
+        return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.pair.symbol + '</div></div>' : renderCard(r.pair, r.data, pairSuppressed);
       }).join('');
       document.getElementById('pairsGrid').innerHTML = html;
     });
