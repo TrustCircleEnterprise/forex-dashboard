@@ -153,6 +153,7 @@ tr:hover td { background: #1a0d32; }
   <!-- TABS -->
   <div class="tabs">
     <button class="tab active" onclick="showTab('signals')">&#x1F4C8; Signals</button>
+    <button class="tab" onclick="showTab('stocks')">&#x1F4CA; Stocks</button>
     <button class="tab" onclick="showTab('journal')">&#x1F4D3; Journal</button>
     <button class="tab" onclick="showTab('pnl')">&#x1F4B0; Daily P&amp;L</button>
   </div>
@@ -169,6 +170,13 @@ tr:hover td { background: #1a0d32; }
     <div id="alertBanner"></div>
     <div class="pairs-grid" id="pairsGrid">
       <div class="loading-state">Fetching live data...</div>
+    </div>
+  </div>
+
+  <!-- STOCKS TAB -->
+  <div class="tab-content" id="tab-stocks">
+    <div id="stocksGrid" class="pairs-grid">
+      <div class="loading-state">Loading stock data...</div>
     </div>
   </div>
 
@@ -226,6 +234,7 @@ function showTab(name) {
   event.target.classList.add('active');
   if (name === 'journal') loadJournal();
   if (name === 'pnl') loadPnl();
+  if (name === 'stocks') loadStocks();
 }
 
 function getEventDateTime(ev) {
@@ -577,6 +586,102 @@ function loadPnl() {
     el.innerHTML = html;
   }).catch(function() {
     el.innerHTML = '<div class="journal-error">Could not load P&amp;L data. Make sure the Google Sheet is set to public.</div>';
+  });
+}
+
+var STOCKS = [
+  { symbol: 'AAPL', name: 'Apple', decimals: 2 },
+  { symbol: 'TSLA', name: 'Tesla', decimals: 2 },
+  { symbol: 'NVDA', name: 'NVIDIA', decimals: 2 },
+  { symbol: 'SPY', name: 'S&P 500 ETF', decimals: 2 },
+  { symbol: 'QQQ', name: 'Nasdaq ETF', decimals: 2 }
+];
+
+function fetchStockCandles(symbol) {
+  var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(symbol) + '&interval=1day&outputsize=60&apikey=' + API_KEY;
+  return fetch(url).then(function(r) { return r.json(); }).then(function(d) {
+    if (!d.values) return null;
+    return d.values.reverse().map(function(v) {
+      return { high: parseFloat(v.high), low: parseFloat(v.low), close: parseFloat(v.close), open: parseFloat(v.open) };
+    });
+  }).catch(function() { return null; });
+}
+
+function renderStockCard(stock, d) {
+  var price = d.price, ema20 = d.ema20, ema50 = d.ema50, sup = d.sup, res = d.res, dir = d.dir, score = d.score, rr = d.rr;
+  var dc = stock.decimals;
+  var change = d.change, changePct = d.changePct;
+  var isReady = score >= 3 && rr >= 1.5;
+  var isForming = score >= 2 && !isReady;
+  var cardClass = isReady ? (dir === 'LONG' ? 'ready-long' : 'ready-short') : isForming ? 'forming' : '';
+  var stripClass = isReady ? 's-ready' : isForming ? 's-forming' : 's-watch';
+  var stripText = isReady ? (score === 4 ? '&#x2713; 4/4 &mdash; Strong signal' : '&#x2713; 3/4 &mdash; Good setup') : isForming ? '&#x26A0; ' + score + '/4 &mdash; Setup forming' : '&#x25CF; ' + score + '/4 &mdash; Watching';
+  var dirClass = dir === 'LONG' ? 'badge-long' : dir === 'SHORT' ? 'badge-short' : 'badge-flat';
+  var crossClass = dir === 'LONG' ? 'bullish' : dir === 'SHORT' ? 'bearish' : 'flat-sig';
+  var crossLabel = dir === 'LONG' ? '&#x2191; above' : dir === 'SHORT' ? '&#x2193; below' : '&mdash; flat';
+  var crossDesc = dir === 'LONG' ? '20 EMA above 50 EMA &mdash; bullish momentum' : dir === 'SHORT' ? '20 EMA below 50 EMA &mdash; bearish momentum' : 'EMAs are flat &mdash; no directional bias';
+  var rrClass = rr >= 1.5 ? 'rr-good' : rr >= 1.0 ? 'rr-warn' : 'rr-bad';
+  var changeClass = change >= 0 ? 'rr-good' : 'rr-bad';
+  var changeStr = (change >= 0 ? '+' : '') + change.toFixed(2) + ' (' + (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%)';
+  var dots = '';
+  for (var i = 1; i <= 4; i++) dots += '<div class="sdot ' + (score >= i ? (score === 4 ? 'f4' : 'f3') : '') + '"></div>';
+  var distSup = (((price - sup) / price) * 100).toFixed(2);
+  var distRes = (((res - price) / price) * 100).toFixed(2);
+  var r2 = (dir === 'LONG' && price > ema20) || (dir === 'SHORT' && price < ema20);
+  var r3 = dir !== 'FLAT' && r2 && Math.abs(price - (dir === 'LONG' ? sup : res)) < (res - sup) * 0.015;
+  var dirArrow = dir === 'LONG' ? '&#x2191;' : dir === 'SHORT' ? '&#x2193;' : '&mdash;';
+
+  return '<div class="pair-card ' + cardClass + '">' +
+    '<div class="card-top"><div><div class="pair-name">' + stock.symbol + '</div><div class="pair-sub">' + stock.name + ' &middot; Daily</div></div>' +
+    '<div><div class="price-val">$' + price.toFixed(dc) + '</div><div style="text-align:right"><span class="' + changeClass + '" style="font-size:12px">' + changeStr + '</span></div><div><span class="dir-badge ' + dirClass + '">' + dirArrow + ' ' + dir + '</span></div></div></div>' +
+    '<div class="status-strip ' + stripClass + '">' + stripText + '</div>' +
+    '<div class="section-label">EMA levels</div>' +
+    '<div class="ema-rows"><div class="ema-row"><span class="ema-left"><span class="ema-dot dot-20"></span>20 EMA</span><span class="ema-val">$' + ema20.toFixed(dc) + '</span></div>' +
+    '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-50"></span>50 EMA</span><span class="ema-val">$' + ema50.toFixed(dc) + '</span></div></div>' +
+    '<div class="crossover-box"><div class="crossover-row"><span class="ema-pill p20">20 EMA</span><span style="color:#7050a0;margin:0 4px">&rarr;</span><span class="ema-pill p50">50 EMA</span><span class="cross-signal ' + crossClass + '" style="margin-left:6px">' + crossLabel + '</span></div><div class="cross-desc">' + crossDesc + '</div></div>' +
+    '<div class="section-label">Support &amp; resistance</div>' +
+    '<div class="sr-rows"><div class="sr-row"><span class="sr-left"><span class="sr-dot-sup"></span>Support</span><span class="sr-val">$' + sup.toFixed(dc) + '<span class="sr-dist">' + distSup + '% away</span></span></div>' +
+    '<div class="sr-row"><span class="sr-left"><span class="sr-dot-res"></span>Resistance</span><span class="sr-val">$' + res.toFixed(dc) + '<span class="sr-dist">' + distRes + '% away</span></span></div></div>' +
+    '<div class="rule-list">' +
+    ruleItem(dir !== "FLAT", "Rule 1 — EMA alignment (" + (dir !== "FLAT" ? dir : "no direction") + ")") +
+    ruleItem(r2, "Rule 2 — Price " + (dir === "LONG" ? "above" : "below") + " 20 EMA") +
+    ruleItem(r3, "Rule 3 — Near " + (dir === "LONG" ? "support" : "resistance")) +
+    ruleItem(rr >= 1.5, "Rule 4 — R:R min 1.5 (now: " + rr.toFixed(2) + ")") +
+    '</div>' +
+    '<div class="card-footer"><div><div class="section-label" style="margin:0">Confluence ' + score + '/4</div><div class="score-dots">' + dots + '</div></div>' +
+    '<div class="rr-block"><div class="rr-label">R:R ratio</div><div class="rr-val ' + rrClass + '">' + rr.toFixed(2) + ' : 1</div></div></div>' +
+    '<a href="https://www.tradingview.com/chart/?symbol=' + stock.symbol + '" target="_blank" class="tv-btn">&#x1F4C8; View on TradingView</a>' +
+    '</div>';
+}
+
+function loadStocks() {
+  var el = document.getElementById('stocksGrid');
+  el.innerHTML = '<div class="loading-state">Loading stock data...</div>';
+  var promises = STOCKS.map(function(stock) {
+    return fetchStockCandles(stock.symbol).then(function(candles) {
+      if (!candles || candles.length < 60) return { stock: stock, error: true };
+      var closes = candles.map(function(c) { return c.close; });
+      var price = closes[closes.length - 1];
+      var prevPrice = closes[closes.length - 2];
+      var change = price - prevPrice;
+      var changePct = (change / prevPrice) * 100;
+      var ema20 = calcEMA(closes, 20);
+      var ema50 = calcEMA(closes, 50);
+      var sr = autoSR(candles);
+      var dir = getDir(ema20, ema50);
+      var score = getScore(price, ema20, ema50, sr.sup, sr.res, dir);
+      var sl = dir === 'LONG' ? sr.sup * 0.999 : sr.res * 1.001;
+      var tp = dir === 'LONG' ? sr.res * 0.999 : sr.sup * 1.001;
+      var risk = Math.abs(price - sl), reward = Math.abs(tp - price);
+      var rr = risk > 0 ? reward / risk : 0;
+      return { stock: stock, data: { price: price, ema20: ema20, ema50: ema50, sup: sr.sup, res: sr.res, dir: dir, score: score, sl: sl, tp: tp, rr: rr, change: change, changePct: changePct } };
+    });
+  });
+  Promise.all(promises).then(function(results) {
+    var html = results.map(function(r) {
+      return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.stock.symbol + '</div></div>' : renderStockCard(r.stock, r.data);
+    }).join('');
+    el.innerHTML = html;
   });
 }
 
