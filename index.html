@@ -274,7 +274,8 @@ function renderNews() {
   var upcoming = getUpcomingEvents();
   var suppressed = isNewsSuppressed();
   var xauVolatile = isXAUVolatileWindow();
-  var warn = upcoming.find(function(x) { return x.ms > 0 && x.ms < 24 * 3600000; });
+  var warn24 = upcoming.find(function(x) { return x.ms > 0 && x.ms < 24 * 3600000; });
+  var warn4 = upcoming.find(function(x) { return x.ms > 0 && x.ms < 4 * 3600000; });
 
   var warnEl = document.getElementById('newsWarning');
   var suppEl = document.getElementById('newsSuppressed');
@@ -282,8 +283,11 @@ function renderNews() {
   if (suppressed) {
     suppEl.innerHTML = '<div class="news-suppressed"><div style="font-size:20px">&#x1F6AB;</div><div><div class="news-suppressed-title">Alerts suppressed — high-impact event within 30 minutes</div><div class="news-suppressed-sub">Trade signals will not fire during this window. Wait for the event to pass.</div></div></div>';
     warnEl.innerHTML = '';
-  } else if (warn) {
-    warnEl.innerHTML = '<div class="news-warning"><div style="font-size:20px">&#x26A0;&#xFE0F;</div><div><div class="news-warning-title">High-impact event within 24 hours — use caution</div><div class="news-warning-sub">' + warn.ev.name + ' (' + warn.ev.currency + ') &mdash; ' + warn.ev.desc + ' &mdash; ' + formatCountdown(warn.ms) + '</div></div></div>';
+  } else if (warn4) {
+    warnEl.innerHTML = '<div class="news-warning" style="border-color:#d85a30;background:#2a1008"><div style="font-size:20px">&#x1F6A8;</div><div><div class="news-warning-title" style="color:#f08060">HIGH ALERT — Event in less than 4 hours. Avoid new trades.</div><div class="news-warning-sub" style="color:#c84040">' + warn4.ev.name + ' (' + warn4.ev.currency + ') &mdash; ' + warn4.ev.desc + ' &mdash; ' + formatCountdown(warn4.ms) + '</div></div></div>';
+    suppEl.innerHTML = '';
+  } else if (warn24) {
+    warnEl.innerHTML = '<div class="news-warning"><div style="font-size:20px">&#x26A0;&#xFE0F;</div><div><div class="news-warning-title">High-impact event within 24 hours — trade with caution</div><div class="news-warning-sub">' + warn24.ev.name + ' (' + warn24.ev.currency + ') &mdash; ' + warn24.ev.desc + ' &mdash; ' + formatCountdown(warn24.ms) + '</div></div></div>';
     suppEl.innerHTML = '';
   } else {
     warnEl.innerHTML = '';
