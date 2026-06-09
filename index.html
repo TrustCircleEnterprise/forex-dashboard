@@ -135,6 +135,21 @@ tr:hover td { background: #1a0d32; }
 .journal-empty { text-align: center; padding: 2rem; color: #9b7fc4; font-size: 14px; }
 .journal-error { text-align: center; padding: 2rem; color: #f08060; font-size: 13px; }
 /* FOOTER */
+.prop-section { margin-bottom: 1.25rem; }
+.prop-title { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+.prop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 10px; }
+.prop-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 10px; padding: 14px; }
+.prop-card.good { border-color: #1d9e75; background: #0d2820; }
+.prop-card.warn { border-color: #ef9f27; background: #221508; }
+.prop-card.danger { border-color: #d85a30; background: #2a1008; }
+.prop-label { font-size: 11px; font-weight: 600; color: #9b7fc4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.prop-value { font-size: 22px; font-weight: 600; color: #d4a800; }
+.prop-sub { font-size: 11px; color: #9b7fc4; margin-top: 3px; }
+.prop-bar-wrap { height: 6px; background: #2d1560; border-radius: 3px; margin-top: 8px; }
+.prop-bar { height: 6px; border-radius: 3px; background: #1d9e75; }
+.prop-bar.warn { background: #ef9f27; }
+.prop-bar.danger { background: #d85a30; }
+.prop-breach { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; background: #2a1008; border: 1.5px solid #d85a30; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: #f08060; }
 .footer-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; flex-wrap: wrap; gap: 8px; }
 .last-upd { font-size: 12px; color: #7050a0; }
 .poll-status { font-size: 12px; color: #9b7fc4; display: flex; align-items: center; gap: 5px; }
@@ -209,7 +224,7 @@ tr:hover td { background: #1a0d32; }
 var WEBHOOK = 'https://script.google.com/macros/s/AKfycbwGScbfS1VY3koSVBaMugpWiiIAlY4aa_WRp9wYrsoQykd2yMZYF1UEs2z8q1YI5lU/exec';
 var API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
 var SHEET_ID = '18C3wbnwUJQYvBw-n0iyOjI07q8-HyFryMuTPXpyQYPc';
-var ACCOUNT_SIZE = 4932.01;
+var ACCOUNT_SIZE = 4899.82;
 var RISK_PER_TRADE = 50;
 var DAILY_GOAL = 25;
 var DAILY_LOSS_LIMIT = 2;
@@ -631,7 +646,75 @@ function loadPnl() {
         '<div class="pnl-card"><div class="pnl-label">Account</div><div class="pnl-value positive">$' + (ACCOUNT_SIZE + totalPnl).toFixed(2) + '</div><div class="pnl-sub">Current balance</div></div>' +
       '</div>';
 
-    el.innerHTML = html;
+    // PROP FIRM TRACKER
+    var challengeStart = new Date('2026-05-31');
+    var now = new Date();
+    var daysSinceStart = Math.floor((now - challengeStart) / (1000 * 60 * 60 * 24));
+    var daysRemaining = Math.max(0, 30 - daysSinceStart);
+    var deadline = new Date(challengeStart);
+    deadline.setDate(deadline.getDate() + 30);
+    var deadlineStr = deadline.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    // Count qualifying days (days with P&L >= $25)
+    var dailyPnl = {};
+    allTrades.forEach(function(t) {
+      var d = t.date ? t.date.split(' ')[0] : '';
+      if (!d) return;
+      if (!dailyPnl[d]) dailyPnl[d] = 0;
+      dailyPnl[d] += t.pnl;
+    });
+    var qualifyingDays = Object.keys(dailyPnl).filter(function(d) { return dailyPnl[d] >= 25; }).length;
+    var daysNeeded = Math.max(0, 7 - qualifyingDays);
+
+    var maxLossUsed = Math.abs(Math.min(0, totalPnl));
+    var maxLossRemaining = Math.max(0, 350 - maxLossUsed);
+    var dailyLossUsed = Math.abs(Math.min(0, todayPnl));
+    var dailyLossRemaining = Math.max(0, 250 - dailyLossUsed);
+
+    var maxLossPct = Math.min(100, (maxLossUsed / 350) * 100);
+    var dailyLossPct = Math.min(100, (dailyLossUsed / 250) * 100);
+    var daysPct = Math.min(100, (qualifyingDays / 7) * 100);
+
+    var maxLossClass = maxLossPct > 75 ? 'danger' : maxLossPct > 50 ? 'warn' : 'good';
+    var dailyLossClass = dailyLossPct > 75 ? 'danger' : dailyLossPct > 50 ? 'warn' : 'good';
+    var barMaxClass = maxLossPct > 75 ? 'danger' : maxLossPct > 50 ? 'warn' : '';
+    var barDailyClass = dailyLossPct > 75 ? 'danger' : dailyLossPct > 50 ? 'warn' : '';
+
+    var breachWarning = '';
+    if (maxLossRemaining < 50) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $50 remaining before max loss breach! Stop trading immediately.</div>';
+    if (dailyLossRemaining < 50) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $50 remaining before daily loss breach! Stop trading today.</div>';
+
+    var propHtml = '<div class="prop-section">' +
+      '<div class="prop-title">&#x1F3C6; Alpha Funded Challenge Tracker</div>' +
+      breachWarning +
+      '<div class="prop-grid">' +
+        '<div class="prop-card' + (qualifyingDays >= 7 ? ' good' : '') + '">' +
+          '<div class="prop-label">Qualifying days</div>' +
+          '<div class="prop-value" style="color:' + (qualifyingDays >= 7 ? '#4cd9a0' : '#d4a800') + '">' + qualifyingDays + '/7</div>' +
+          '<div class="prop-sub">' + daysNeeded + ' more needed</div>' +
+          '<div class="prop-bar-wrap"><div class="prop-bar" style="width:' + daysPct + '%"></div></div>' +
+        '</div>' +
+        '<div class="prop-card' + (daysRemaining < 7 ? ' warn' : '') + '">' +
+          '<div class="prop-label">Days remaining</div>' +
+          '<div class="prop-value" style="color:' + (daysRemaining < 7 ? '#f0b030' : '#d4a800') + '">' + daysRemaining + '</div>' +
+          '<div class="prop-sub">Deadline: ' + deadlineStr + '</div>' +
+        '</div>' +
+        '<div class="prop-card ' + maxLossClass + '">' +
+          '<div class="prop-label">Max loss left</div>' +
+          '<div class="prop-value" style="color:' + (maxLossClass === 'danger' ? '#f08060' : maxLossClass === 'warn' ? '#f0b030' : '#4cd9a0') + '">$' + maxLossRemaining.toFixed(2) + '</div>' +
+          '<div class="prop-sub">$' + maxLossUsed.toFixed(2) + ' used of $350</div>' +
+          '<div class="prop-bar-wrap"><div class="prop-bar ' + barMaxClass + '" style="width:' + maxLossPct + '%"></div></div>' +
+        '</div>' +
+        '<div class="prop-card ' + dailyLossClass + '">' +
+          '<div class="prop-label">Daily loss left</div>' +
+          '<div class="prop-value" style="color:' + (dailyLossClass === 'danger' ? '#f08060' : dailyLossClass === 'warn' ? '#f0b030' : '#4cd9a0') + '">$' + dailyLossRemaining.toFixed(2) + '</div>' +
+          '<div class="prop-sub">$' + dailyLossUsed.toFixed(2) + ' used of $250</div>' +
+          '<div class="prop-bar-wrap"><div class="prop-bar ' + barDailyClass + '" style="width:' + dailyLossPct + '%"></div></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    el.innerHTML = propHtml + html;
   }).catch(function() {
     el.innerHTML = '<div class="journal-error">Could not load P&amp;L data. Make sure the Google Sheet is set to public.</div>';
   });
