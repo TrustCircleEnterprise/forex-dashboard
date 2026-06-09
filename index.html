@@ -714,7 +714,7 @@ function loadPnl() {
       '</div>' +
     '</div>';
 
-    el.innerHTML = propHtml + html;
+    el.innerHTML = propHtml + '<div style="font-size:11px;font-weight:600;color:#9b7fc4;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;margin-top:1.25rem">Daily &amp; All Time</div>' + html;
   }).catch(function() {
     el.innerHTML = '<div class="journal-error">Could not load P&amp;L data. Make sure the Google Sheet is set to public.</div>';
   });
