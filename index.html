@@ -274,6 +274,7 @@ function renderNews() {
   var upcoming = getUpcomingEvents();
   var suppressed = isNewsSuppressed();
   var xauVolatile = isXAUVolatileWindow();
+  var eurSession = isEURUSDSession();
   var warn24 = upcoming.find(function(x) { return x.ms > 0 && x.ms < 24 * 3600000; });
   var warn4 = upcoming.find(function(x) { return x.ms > 0 && x.ms < 4 * 3600000; });
 
@@ -371,6 +372,15 @@ function renderBanner(alerts) {
   el.innerHTML = '<div class="alert-banner"><div style="font-size:22px">&#x1F514;</div><div class="alert-banner-text"><div class="alert-banner-title">Trade setup detected &mdash; SMS &amp; email sent</div><div class="alert-banner-sub">' + names + '</div></div><span class="alert-banner-sent">&#x2713; Sent</span></div>';
 }
 
+function isEURUSDSession() {
+  var now = new Date();
+  var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+  var hour = est.getHours();
+  var london = hour >= 3 && hour < 12;
+  var newYork = hour >= 8 && hour < 17;
+  return london || newYork;
+}
+
 function isXAUVolatileWindow() {
   var now = new Date();
   var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
@@ -395,7 +405,7 @@ function renderCard(pair, d, suppressed) {
   var isForming = score >= 2 && !isReady;
   var cardClass = suppressed ? 'suppressed' : isReady ? (dir === 'LONG' ? 'ready-long' : 'ready-short') : isForming ? 'forming' : '';
   var stripClass = suppressed ? 's-suppressed' : isReady ? 's-ready' : isForming ? 's-forming' : 's-watch';
-  var stripText = suppressed ? '&#x1F6AB; Alerts suppressed &mdash; news event window' : isReady ? (score === 4 ? '&#x2713; 4/4 &mdash; Strong signal &middot; Alert sent' : '&#x2713; 3/4 &mdash; Good setup &middot; Alert sent') : isForming ? '&#x26A0; ' + score + '/4 &mdash; Setup forming, keep watching' : '&#x25CF; ' + score + '/4 &mdash; Watching';
+  var stripText = suppressed ? (d.eurSession === false ? '&#x1F4A4; Outside London/New York session &mdash; no alerts' : '&#x1F6AB; Alerts suppressed &mdash; news event window') : isReady ? (score === 4 ? '&#x2713; 4/4 &mdash; Strong signal &middot; Alert sent' : '&#x2713; 3/4 &mdash; Good setup &middot; Alert sent') : isForming ? '&#x26A0; ' + score + '/4 &mdash; Setup forming, keep watching' : '&#x25CF; ' + score + '/4 &mdash; Watching';
   var dirClass = dir === 'LONG' ? 'badge-long' : dir === 'SHORT' ? 'badge-short' : 'badge-flat';
   var crossClass = dir === 'LONG' ? 'bullish' : dir === 'SHORT' ? 'bearish' : 'flat-sig';
   var crossLabel = dir === 'LONG' ? '&#x2191; above' : dir === 'SHORT' ? '&#x2193; below' : '&mdash; flat';
@@ -454,10 +464,11 @@ function loadSignals() {
 
   var suppressed = isNewsSuppressed();
   var xauVolatile = isXAUVolatileWindow();
+  var eurSession = isEURUSDSession();
 
   Promise.all(promises).then(function(results) {
     var alertPromises = results.map(function(r) {
-      var pairBlocked = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile);
+      var pairBlocked = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile) || (r.pair.name === 'EURUSD' && !eurSession);
       if (!r.error && r.data.score >= 3 && r.data.rr >= 1.5 && !pairBlocked) {
         return fireWebhook(r.pair.name, { direction: r.data.dir, price: r.data.price, sl: r.data.sl, tp: r.data.tp, rr: r.data.rr, score: r.data.score }).then(function(sent) {
           return sent ? { pair: r.pair.symbol, direction: r.data.dir } : null;
@@ -470,7 +481,8 @@ function loadSignals() {
       var alerts = alertResults.filter(function(a) { return a !== null; });
       renderBanner(alerts);
       var html = results.map(function(r) {
-        var pairSuppressed = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile);
+        var pairSuppressed = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile) || (r.pair.name === 'EURUSD' && !eurSession);
+      if (!r.error) r.data.eurSession = (r.pair.name === 'EURUSD') ? eurSession : true;
         return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.pair.symbol + '</div></div>' : renderCard(r.pair, r.data, pairSuppressed);
       }).join('');
       document.getElementById('pairsGrid').innerHTML = html;
