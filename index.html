@@ -59,6 +59,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 @keyframes flashRed { 0%,100%{border-color:#d85a30} 50%{border-color:#ff2020} }
 .stop-banner-title { font-size: 16px; font-weight: 700; color: #f08060; }
 .stop-banner-sub { font-size: 13px; color: #c84040; margin-top: 3px; }
+.ema-cross-section { margin-bottom: 1.25rem; }
+.ema-cross-title { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+.ema-cross-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.ema-cross-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 10px; padding: 12px 14px; }
+.ema-cross-card.cross-long { border-color: #1d9e75; background: #0d2820; }
+.ema-cross-card.cross-short { border-color: #d85a30; background: #2a1008; }
+.ema-cross-card.cross-none { border-color: #4a2d7a; }
+.ema-cross-pair { font-size: 13px; font-weight: 600; color: #f0e6ff; margin-bottom: 4px; }
+.ema-cross-signal { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.ema-cross-long-text { color: #4cd9a0; }
+.ema-cross-short-text { color: #f08060; }
+.ema-cross-none-text { color: #9b7fc4; }
+.ema-cross-detail { font-size: 12px; color: #9b7fc4; }
 .alert-banner { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 10px; background: #0d2820; border: 1.5px solid #1d9e75; margin-bottom: 1.25rem; }
 .alert-banner-title { font-size: 14px; font-weight: 600; color: #4cd9a0; }
 .alert-banner-sub { font-size: 12px; color: #1d9e75; margin-top: 2px; }
@@ -188,6 +201,10 @@ tr:hover td { background: #1a0d32; }
     </div>
     <div id="stopBanner"></div>
   <div id="alertBanner"></div>
+  <div class="ema-cross-section">
+    <div class="ema-cross-title">&#x26A1; 50 EMA Cross Monitor</div>
+    <div class="ema-cross-grid" id="emaCrossGrid"><div class="loading-state" style="padding:1rem">Checking EMA crosses...</div></div>
+  </div>
     <div class="pairs-grid" id="pairsGrid">
       <div class="loading-state">Fetching live data...</div>
     </div>
@@ -469,7 +486,18 @@ function checkStopTrading() {
   fetch(url).then(function(r) { return r.text(); }).then(function(text) {
     var json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
     var rows = json.table.rows;
-    var today = new Date();
+    var now = new Date();
+    var estNow = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+    // Trading day resets at 5 PM EST
+    var resetHour = 17;
+    var todayStart = new Date(estNow);
+    if (estNow.getHours() < resetHour) {
+      todayStart.setDate(todayStart.getDate() - 1);
+    }
+    todayStart.setHours(resetHour, 0, 0, 0);
+    var todayEnd = new Date(todayStart);
+    todayEnd.setDate(todayEnd.getDate() + 1);
+
     var todayLosses = 0;
     rows.forEach(function(row) {
       var c = row.c;
@@ -477,7 +505,7 @@ function checkStopTrading() {
       var dateVal = (c[0] && c[0].f) ? c[0].f : '';
       if (status === 'LOSS' && dateVal) {
         var tradeDate = new Date(dateVal);
-        if (tradeDate.toDateString() === today.toDateString()) todayLosses++;
+        if (tradeDate >= todayStart && tradeDate < todayEnd) todayLosses++;
       }
     });
     var el = document.getElementById('stopBanner');
@@ -598,19 +626,25 @@ function loadPnl() {
   fetch(url).then(function(r) { return r.text(); }).then(function(text) {
     var json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
     var rows = json.table.rows;
-    var today = new Date().toLocaleDateString('en-US');
+    var nowEst = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/New_York'}));
+    var resetH = 17;
+    var dayStart = new Date(nowEst);
+    if (nowEst.getHours() < resetH) dayStart.setDate(dayStart.getDate() - 1);
+    dayStart.setHours(resetH, 0, 0, 0);
+    var dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+
     var todayTrades = [], allTrades = [];
 
     rows.forEach(function(row) {
       var c = row.c;
       var status = (c[9] && c[9].v) ? c[9].v.toString().toUpperCase() : '';
       var pnl = (c[10] && c[10].v !== null) ? parseFloat(c[10].v) : 0;
-      var dateStr = (c[0] && c[0].v) ? c[0].v.toString() : '';
+      var dateStr = (c[0] && c[0].f) ? c[0].f : (c[0] && c[0].v) ? c[0].v.toString() : '';
       allTrades.push({ status: status, pnl: pnl, date: dateStr });
-      if (dateStr.indexOf(today.split('/')[0]) !== -1 || dateStr.indexOf(new Date().getMonth() + 1) !== -1) {
+      if (dateStr) {
         var tradeDate = new Date(dateStr);
-        var nowDate = new Date();
-        if (tradeDate.toDateString() === nowDate.toDateString()) {
+        if (tradeDate >= dayStart && tradeDate < dayEnd) {
           todayTrades.push({ status: status, pnl: pnl });
         }
       }
@@ -816,11 +850,50 @@ function loadStocks() {
   });
 }
 
+function checkEMACrossDashboard() {
+  var grid = document.getElementById('emaCrossGrid');
+  var pairs = [
+    { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
+    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 }
+  ];
+  var promises = pairs.map(function(pair) {
+    return fetchCandles(pair.symbol).then(function(candles) {
+      if (!candles || candles.length < 60) return { pair: pair, error: true };
+      var closes = candles.map(function(c) { return c.close; });
+      var price = closes[closes.length - 1];
+      var prevPrice = closes[closes.length - 2];
+      var ema50 = calcEMA(closes, 50);
+      var prevEma50 = calcEMA(closes.slice(0, -1), 50);
+      var crossedBelow = prevPrice >= prevEma50 && price < ema50;
+      var crossedAbove = prevPrice <= prevEma50 && price > ema50;
+      var aboveEma = price > ema50;
+      return { pair: pair, price: price, ema50: ema50, crossedBelow: crossedBelow, crossedAbove: crossedAbove, aboveEma: aboveEma };
+    });
+  });
+  Promise.all(promises).then(function(results) {
+    var html = results.map(function(r) {
+      if (r.error) return '<div class="ema-cross-card cross-none"><div class="ema-cross-pair">' + r.pair.symbol + '</div><div class="ema-cross-signal ema-cross-none-text">Could not load</div></div>';
+      var cardClass = r.crossedAbove ? 'cross-long' : r.crossedBelow ? 'cross-short' : 'cross-none';
+      var sigClass = r.crossedAbove ? 'ema-cross-long-text' : r.crossedBelow ? 'ema-cross-short-text' : 'ema-cross-none-text';
+      var sigText = r.crossedAbove ? '&#x2705; Just crossed ABOVE 50 EMA' : r.crossedBelow ? '&#x274C; Just crossed BELOW 50 EMA' : (r.aboveEma ? '&#x2B06; Price above 50 EMA' : '&#x2B07; Price below 50 EMA');
+      var dirText = r.aboveEma ? 'Bias: LONG' : 'Bias: SHORT';
+      return '<div class="ema-cross-card ' + cardClass + '">' +
+        '<div class="ema-cross-pair">' + r.pair.symbol + '</div>' +
+        '<div class="ema-cross-signal ' + sigClass + '">' + sigText + '</div>' +
+        '<div class="ema-cross-detail">Price: ' + r.price.toFixed(r.pair.decimals) + ' &middot; 50 EMA: ' + r.ema50.toFixed(r.pair.decimals) + '</div>' +
+        '<div class="ema-cross-detail" style="margin-top:3px">' + dirText + '</div>' +
+      '</div>';
+    }).join('');
+    grid.innerHTML = html;
+  });
+}
+
 function loadAll() {
   var btn = document.getElementById('refreshBtn');
   btn.textContent = 'Loading...';
   renderNews();
   checkStopTrading();
+  checkEMACrossDashboard();
   loadSignals();
   document.getElementById('lastUpd').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   btn.textContent = '\u21BB Refresh';
