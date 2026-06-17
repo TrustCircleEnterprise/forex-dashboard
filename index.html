@@ -950,7 +950,7 @@ function checkDeloreanDashboard() {
         var now = new Date();
         var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
         var h = est.getHours();
-        return (h >= 3 && h < 12) || (h >= 8 && h < 17);
+        return (h >= 19 || h < 4) || (h >= 3 && h < 12) || (h >= 8 && h < 17);
       })();
 
       var signalReady = !tangled && stackLong || stackShort;
@@ -1121,7 +1121,7 @@ function checkDeloreanDashboard() {
         var now = new Date();
         var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
         var h = est.getHours();
-        return (h >= 3 && h < 12) || (h >= 8 && h < 17);
+        return (h >= 19 || h < 4) || (h >= 3 && h < 12) || (h >= 8 && h < 17);
       })();
 
       var signalReady = !tangled && stackLong || stackShort;
