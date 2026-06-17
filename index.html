@@ -59,6 +59,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 @keyframes flashRed { 0%,100%{border-color:#d85a30} 50%{border-color:#ff2020} }
 .stop-banner-title { font-size: 16px; font-weight: 700; color: #f08060; }
 .stop-banner-sub { font-size: 13px; color: #c84040; margin-top: 3px; }
+.delorean-section { margin-bottom: 1.25rem; }
+.delorean-title { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+.delorean-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.delorean-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 12px; padding: 14px; }
+.delorean-card.d-long { border-color: #1d9e75; background: #0d2820; }
+.delorean-card.d-short { border-color: #d85a30; background: #2a1008; }
+.delorean-card.d-tangled { border-color: #4a2d7a; opacity: 0.8; }
+.delorean-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.delorean-pair { font-size: 15px; font-weight: 600; color: #f0e6ff; }
+.delorean-badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 8px; }
+.d-badge-long { background: #0d2820; color: #4cd9a0; }
+.d-badge-short { background: #2a1008; color: #f08060; }
+.d-badge-tangled { background: #1e0d3a; color: #9b7fc4; }
+.delorean-ema-stack { margin-bottom: 10px; }
+.d-ema-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 0.5px solid #2d1560; }
+.d-ema-row:last-child { border-bottom: none; }
+.d-ema-label { color: #9b7fc4; }
+.d-ema-val { color: #d4a800; font-weight: 600; }
+.d-ema-baseline { color: #f0e6ff; font-weight: 700; }
+.delorean-checks { margin-bottom: 10px; }
+.d-check-row { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 0; }
+.d-check-pass { color: #4cd9a0; }
+.d-check-fail { color: #f08060; }
+.d-check-text-pass { color: #b89fd4; }
+.d-check-text-fail { color: #7050a0; }
+.delorean-levels { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; border-top: 0.5px solid #2d1560; padding-top: 8px; }
+.d-level { background: #1e0d3a; border-radius: 6px; padding: 6px 10px; }
+.d-level-label { font-size: 10px; color: #9b7fc4; text-transform: uppercase; font-weight: 600; }
+.d-level-val { font-size: 14px; font-weight: 600; color: #f0e6ff; margin-top: 2px; }
+.d-level-val.tp { color: #4cd9a0; }
+.d-level-val.sl { color: #f08060; }
+.d-level-val.rr-good { color: #4cd9a0; }
+.d-level-val.rr-bad { color: #f08060; }
 .fib-section { margin-bottom: 1.25rem; }
 .fib-title { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
 .fib-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
@@ -204,6 +237,10 @@ tr:hover td { background: #1a0d32; }
     </div>
     <div id="stopBanner"></div>
   <div id="alertBanner"></div>
+  <div class="delorean-section">
+    <div class="delorean-title">&#x1F697; Delorean EMA Stack</div>
+    <div class="delorean-grid" id="deloreanGrid"><div class="loading-state" style="padding:1rem">Calculating EMA stack...</div></div>
+  </div>
   <div class="fib-section">
     <div class="fib-title">&#x1F4D0; Fibonacci Retracement Levels</div>
     <div class="fib-grid" id="fibGrid"><div class="loading-state" style="padding:1rem">Calculating Fib levels...</div></div>
@@ -854,6 +891,117 @@ function loadStocks() {
   });
 }
 
+function checkDeloreanDashboard() {
+  var grid = document.getElementById('deloreanGrid');
+  var pairs = [
+    { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
+    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
+  ];
+
+  var promises = pairs.map(function(pair) {
+    var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair.symbol) + '&interval=1h&outputsize=60&apikey=' + API_KEY;
+    return fetch(url).then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.values) return { pair: pair, error: true };
+      var candles = d.values.reverse().map(function(v) {
+        return { high: parseFloat(v.high), low: parseFloat(v.low), close: parseFloat(v.close) };
+      });
+      var closes = candles.map(function(c) { return c.close; });
+      var highs = candles.map(function(c) { return c.high; });
+      var lows = candles.map(function(c) { return c.low; });
+      var price = closes[closes.length - 1];
+      var ema5  = calcEMA(closes, 5);
+      var ema8  = calcEMA(closes, 8);
+      var ema13 = calcEMA(closes, 13);
+      var ema21 = calcEMA(closes, 21);
+      var ema34 = calcEMA(closes, 34);
+
+      var emaMax = Math.max(ema5, ema8, ema13, ema21, ema34);
+      var emaMin = Math.min(ema5, ema8, ema13, ema21, ema34);
+      var spread = (emaMax - emaMin) / price;
+      var tangled = spread < 0.001;
+
+      var stackLong  = ema5 > ema8 && ema8 > ema13 && ema13 > ema21 && ema21 > ema34;
+      var stackShort = ema5 < ema8 && ema8 < ema13 && ema13 < ema21 && ema21 < ema34;
+      var aboveBaseline = price > ema13;
+      var belowBaseline = price < ema13;
+
+      var direction = stackLong ? 'LONG' : stackShort ? 'SHORT' : 'FLAT';
+      var baselineOk = (direction === 'LONG' && aboveBaseline) || (direction === 'SHORT' && belowBaseline);
+
+      // SL/TP calculation
+      var swingHigh = Math.max.apply(null, highs.slice(-10));
+      var swingLow  = Math.min.apply(null, lows.slice(-10));
+      var sl, tp, rr;
+      if (direction === 'LONG') {
+        sl = swingLow - (price * 0.0002);
+        tp = price + (1.3 * (price - sl));
+        var risk = price - sl; var reward = tp - price;
+        rr = risk > 0 ? reward / risk : 0;
+      } else if (direction === 'SHORT') {
+        sl = swingHigh + (price * 0.0002);
+        tp = price - (1.3 * (sl - price));
+        var risk = sl - price; var reward = price - tp;
+        rr = risk > 0 ? reward / risk : 0;
+      } else { sl = 0; tp = 0; rr = 0; }
+
+      var rrOk = rr >= 1.3;
+      var sessionOk = (function() {
+        var now = new Date();
+        var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+        var h = est.getHours();
+        return (h >= 3 && h < 12) || (h >= 8 && h < 17);
+      })();
+
+      var signalReady = !tangled && stackLong || stackShort;
+      signalReady = signalReady && baselineOk && rrOk && sessionOk;
+
+      return { pair: pair, price: price, ema5: ema5, ema8: ema8, ema13: ema13, ema21: ema21, ema34: ema34, direction: direction, tangled: tangled, baselineOk: baselineOk, rrOk: rrOk, sessionOk: sessionOk, signalReady: signalReady, sl: sl, tp: tp, rr: rr };
+    }).catch(function() { return { pair: pair, error: true }; });
+  });
+
+  Promise.all(promises).then(function(results) {
+    var html = results.map(function(r) {
+      if (r.error) return '<div class="delorean-card"><div class="delorean-pair">' + r.pair.symbol + '</div><div style="color:#9b7fc4;font-size:12px">Could not load</div></div>';
+
+      var cardClass = r.tangled ? 'd-tangled' : r.direction === 'LONG' ? 'd-long' : r.direction === 'SHORT' ? 'd-short' : 'd-tangled';
+      var badgeClass = r.tangled ? 'd-badge-tangled' : r.direction === 'LONG' ? 'd-badge-long' : r.direction === 'SHORT' ? 'd-badge-short' : 'd-badge-tangled';
+      var badgeText = r.tangled ? '&#x26A0; Tangled' : r.direction === 'LONG' ? '&#x2191; LONG' : r.direction === 'SHORT' ? '&#x2193; SHORT' : '&#x2014; Flat';
+      var dc = r.pair.decimals;
+
+      var checks = [
+        { pass: !r.tangled && (r.direction === 'LONG' || r.direction === 'SHORT'), text: 'EMA stack fanned ' + r.direction },
+        { pass: r.baselineOk, text: 'Price ' + (r.direction === 'LONG' ? 'above' : 'below') + ' 13 EMA baseline' },
+        { pass: r.sessionOk, text: 'London/NY session active' },
+        { pass: r.rrOk, text: 'R:R &ge; 1.3 (now: ' + r.rr.toFixed(2) + ')' }
+      ].map(function(ch) {
+        return '<div class="d-check-row"><span class="' + (ch.pass ? 'd-check-pass' : 'd-check-fail') + '">' + (ch.pass ? '&#x2705;' : '&#x274C;') + '</span><span class="' + (ch.pass ? 'd-check-text-pass' : 'd-check-text-fail') + '">' + ch.text + '</span></div>';
+      }).join('');
+
+      var levels = r.signalReady ? '<div class="delorean-levels">' +
+        '<div class="d-level"><div class="d-level-label">Stop Loss</div><div class="d-level-val sl">' + r.sl.toFixed(dc) + '</div></div>' +
+        '<div class="d-level"><div class="d-level-label">Take Profit</div><div class="d-level-val tp">' + r.tp.toFixed(dc) + '</div></div>' +
+        '<div class="d-level"><div class="d-level-label">R:R Ratio</div><div class="d-level-val ' + (r.rrOk ? 'rr-good' : 'rr-bad') + '">' + r.rr.toFixed(2) + ' : 1</div></div>' +
+        '<div class="d-level"><div class="d-level-label">Signal</div><div class="d-level-val" style="color:#d4a800">&#x1F697; READY</div></div>' +
+        '</div>' : '';
+
+      return '<div class="delorean-card ' + cardClass + '">' +
+        '<div class="delorean-header"><span class="delorean-pair">' + r.pair.symbol + ' @ ' + r.price.toFixed(dc) + '</span><span class="delorean-badge ' + badgeClass + '">' + badgeText + '</span></div>' +
+        '<div class="delorean-ema-stack">' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 5</span><span class="d-ema-val">' + r.ema5.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 8</span><span class="d-ema-val">' + r.ema8.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 13 (baseline)</span><span class="d-ema-baseline">' + r.ema13.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 21</span><span class="d-ema-val">' + r.ema21.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 34</span><span class="d-ema-val">' + r.ema34.toFixed(dc) + '</span></div>' +
+        '</div>' +
+        '<div class="delorean-checks">' + checks + '</div>' +
+        levels +
+      '</div>';
+    }).join('');
+    grid.innerHTML = html;
+  });
+}
+
 function checkFibDashboard() {
   var grid = document.getElementById('fibGrid');
   var pairs = [
@@ -908,6 +1056,117 @@ function checkFibDashboard() {
         '<div class="fib-pair"><span>' + r.pair.symbol + ' @ ' + r.price.toFixed(r.pair.decimals) + '</span>' + emaBadge + '</div>' +
         levelsHtml +
         '<div style="font-size:11px;color:#7050a0;margin-top:6px">Swing: ' + r.swingLow.toFixed(r.pair.decimals) + ' — ' + r.swingHigh.toFixed(r.pair.decimals) + '</div>' +
+      '</div>';
+    }).join('');
+    grid.innerHTML = html;
+  });
+}
+
+function checkDeloreanDashboard() {
+  var grid = document.getElementById('deloreanGrid');
+  var pairs = [
+    { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
+    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
+  ];
+
+  var promises = pairs.map(function(pair) {
+    var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair.symbol) + '&interval=1h&outputsize=60&apikey=' + API_KEY;
+    return fetch(url).then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.values) return { pair: pair, error: true };
+      var candles = d.values.reverse().map(function(v) {
+        return { high: parseFloat(v.high), low: parseFloat(v.low), close: parseFloat(v.close) };
+      });
+      var closes = candles.map(function(c) { return c.close; });
+      var highs = candles.map(function(c) { return c.high; });
+      var lows = candles.map(function(c) { return c.low; });
+      var price = closes[closes.length - 1];
+      var ema5  = calcEMA(closes, 5);
+      var ema8  = calcEMA(closes, 8);
+      var ema13 = calcEMA(closes, 13);
+      var ema21 = calcEMA(closes, 21);
+      var ema34 = calcEMA(closes, 34);
+
+      var emaMax = Math.max(ema5, ema8, ema13, ema21, ema34);
+      var emaMin = Math.min(ema5, ema8, ema13, ema21, ema34);
+      var spread = (emaMax - emaMin) / price;
+      var tangled = spread < 0.001;
+
+      var stackLong  = ema5 > ema8 && ema8 > ema13 && ema13 > ema21 && ema21 > ema34;
+      var stackShort = ema5 < ema8 && ema8 < ema13 && ema13 < ema21 && ema21 < ema34;
+      var aboveBaseline = price > ema13;
+      var belowBaseline = price < ema13;
+
+      var direction = stackLong ? 'LONG' : stackShort ? 'SHORT' : 'FLAT';
+      var baselineOk = (direction === 'LONG' && aboveBaseline) || (direction === 'SHORT' && belowBaseline);
+
+      // SL/TP calculation
+      var swingHigh = Math.max.apply(null, highs.slice(-10));
+      var swingLow  = Math.min.apply(null, lows.slice(-10));
+      var sl, tp, rr;
+      if (direction === 'LONG') {
+        sl = swingLow - (price * 0.0002);
+        tp = price + (1.3 * (price - sl));
+        var risk = price - sl; var reward = tp - price;
+        rr = risk > 0 ? reward / risk : 0;
+      } else if (direction === 'SHORT') {
+        sl = swingHigh + (price * 0.0002);
+        tp = price - (1.3 * (sl - price));
+        var risk = sl - price; var reward = price - tp;
+        rr = risk > 0 ? reward / risk : 0;
+      } else { sl = 0; tp = 0; rr = 0; }
+
+      var rrOk = rr >= 1.3;
+      var sessionOk = (function() {
+        var now = new Date();
+        var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+        var h = est.getHours();
+        return (h >= 3 && h < 12) || (h >= 8 && h < 17);
+      })();
+
+      var signalReady = !tangled && stackLong || stackShort;
+      signalReady = signalReady && baselineOk && rrOk && sessionOk;
+
+      return { pair: pair, price: price, ema5: ema5, ema8: ema8, ema13: ema13, ema21: ema21, ema34: ema34, direction: direction, tangled: tangled, baselineOk: baselineOk, rrOk: rrOk, sessionOk: sessionOk, signalReady: signalReady, sl: sl, tp: tp, rr: rr };
+    }).catch(function() { return { pair: pair, error: true }; });
+  });
+
+  Promise.all(promises).then(function(results) {
+    var html = results.map(function(r) {
+      if (r.error) return '<div class="delorean-card"><div class="delorean-pair">' + r.pair.symbol + '</div><div style="color:#9b7fc4;font-size:12px">Could not load</div></div>';
+
+      var cardClass = r.tangled ? 'd-tangled' : r.direction === 'LONG' ? 'd-long' : r.direction === 'SHORT' ? 'd-short' : 'd-tangled';
+      var badgeClass = r.tangled ? 'd-badge-tangled' : r.direction === 'LONG' ? 'd-badge-long' : r.direction === 'SHORT' ? 'd-badge-short' : 'd-badge-tangled';
+      var badgeText = r.tangled ? '&#x26A0; Tangled' : r.direction === 'LONG' ? '&#x2191; LONG' : r.direction === 'SHORT' ? '&#x2193; SHORT' : '&#x2014; Flat';
+      var dc = r.pair.decimals;
+
+      var checks = [
+        { pass: !r.tangled && (r.direction === 'LONG' || r.direction === 'SHORT'), text: 'EMA stack fanned ' + r.direction },
+        { pass: r.baselineOk, text: 'Price ' + (r.direction === 'LONG' ? 'above' : 'below') + ' 13 EMA baseline' },
+        { pass: r.sessionOk, text: 'London/NY session active' },
+        { pass: r.rrOk, text: 'R:R &ge; 1.3 (now: ' + r.rr.toFixed(2) + ')' }
+      ].map(function(ch) {
+        return '<div class="d-check-row"><span class="' + (ch.pass ? 'd-check-pass' : 'd-check-fail') + '">' + (ch.pass ? '&#x2705;' : '&#x274C;') + '</span><span class="' + (ch.pass ? 'd-check-text-pass' : 'd-check-text-fail') + '">' + ch.text + '</span></div>';
+      }).join('');
+
+      var levels = r.signalReady ? '<div class="delorean-levels">' +
+        '<div class="d-level"><div class="d-level-label">Stop Loss</div><div class="d-level-val sl">' + r.sl.toFixed(dc) + '</div></div>' +
+        '<div class="d-level"><div class="d-level-label">Take Profit</div><div class="d-level-val tp">' + r.tp.toFixed(dc) + '</div></div>' +
+        '<div class="d-level"><div class="d-level-label">R:R Ratio</div><div class="d-level-val ' + (r.rrOk ? 'rr-good' : 'rr-bad') + '">' + r.rr.toFixed(2) + ' : 1</div></div>' +
+        '<div class="d-level"><div class="d-level-label">Signal</div><div class="d-level-val" style="color:#d4a800">&#x1F697; READY</div></div>' +
+        '</div>' : '';
+
+      return '<div class="delorean-card ' + cardClass + '">' +
+        '<div class="delorean-header"><span class="delorean-pair">' + r.pair.symbol + ' @ ' + r.price.toFixed(dc) + '</span><span class="delorean-badge ' + badgeClass + '">' + badgeText + '</span></div>' +
+        '<div class="delorean-ema-stack">' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 5</span><span class="d-ema-val">' + r.ema5.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 8</span><span class="d-ema-val">' + r.ema8.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 13 (baseline)</span><span class="d-ema-baseline">' + r.ema13.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 21</span><span class="d-ema-val">' + r.ema21.toFixed(dc) + '</span></div>' +
+          '<div class="d-ema-row"><span class="d-ema-label">EMA 34</span><span class="d-ema-val">' + r.ema34.toFixed(dc) + '</span></div>' +
+        '</div>' +
+        '<div class="delorean-checks">' + checks + '</div>' +
+        levels +
       '</div>';
     }).join('');
     grid.innerHTML = html;
@@ -1017,6 +1276,7 @@ function loadAll() {
   btn.textContent = 'Loading...';
   renderNews();
   checkStopTrading();
+  checkDeloreanDashboard();
   checkFibDashboard();
   loadSignals();
   document.getElementById('lastUpd').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
