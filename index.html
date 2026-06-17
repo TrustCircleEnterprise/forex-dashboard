@@ -74,19 +74,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .fib-level-row.above-price .fib-level-label { color: #4cd9a0; }
 .fib-level-row.below-price .fib-level-label { color: #f08060; }
 .fib-level-row.nearest { background: #1e0d3a; border-radius: 4px; padding: 4px 6px; }
-.ema-cross-section { margin-bottom: 1.25rem; }
-.ema-cross-title { font-size: 11px; font-weight: 600; color: #9b7fc4; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
-.ema-cross-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-.ema-cross-card { background: #180d30; border: 1px solid #4a2d7a; border-radius: 10px; padding: 12px 14px; }
-.ema-cross-card.cross-long { border-color: #1d9e75; background: #0d2820; }
-.ema-cross-card.cross-short { border-color: #d85a30; background: #2a1008; }
-.ema-cross-card.cross-none { border-color: #4a2d7a; }
-.ema-cross-pair { font-size: 13px; font-weight: 600; color: #f0e6ff; margin-bottom: 4px; }
-.ema-cross-signal { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.ema-cross-long-text { color: #4cd9a0; }
-.ema-cross-short-text { color: #f08060; }
-.ema-cross-none-text { color: #9b7fc4; }
-.ema-cross-detail { font-size: 12px; color: #9b7fc4; }
+
 .alert-banner { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 10px; background: #0d2820; border: 1.5px solid #1d9e75; margin-bottom: 1.25rem; }
 .alert-banner-title { font-size: 14px; font-weight: 600; color: #4cd9a0; }
 .alert-banner-sub { font-size: 12px; color: #1d9e75; margin-top: 2px; }
@@ -220,10 +208,7 @@ tr:hover td { background: #1a0d32; }
     <div class="fib-title">&#x1F4D0; Fibonacci Retracement Levels</div>
     <div class="fib-grid" id="fibGrid"><div class="loading-state" style="padding:1rem">Calculating Fib levels...</div></div>
   </div>
-  <div class="ema-cross-section">
-    <div class="ema-cross-title">&#x26A1; 50 EMA Cross Monitor</div>
-    <div class="ema-cross-grid" id="emaCrossGrid"><div class="loading-state" style="padding:1rem">Checking EMA crosses...</div></div>
-  </div>
+
     <div class="pairs-grid" id="pairsGrid">
       <div class="loading-state">Fetching live data...</div>
     </div>
@@ -929,6 +914,66 @@ function checkFibDashboard() {
   });
 }
 
+function checkFibDashboard() {
+  var grid = document.getElementById('fibGrid');
+  var pairs = [
+    { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
+    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
+  ];
+  var fibLevels = [0.236, 0.382, 0.5, 0.618, 0.786];
+
+  var promises = pairs.map(function(pair) {
+    var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair.symbol) + '&interval=1h&outputsize=60&apikey=' + API_KEY;
+    return fetch(url).then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.values) return { pair: pair, error: true };
+      var candles = d.values.reverse().map(function(v) {
+        return { high: parseFloat(v.high), low: parseFloat(v.low), close: parseFloat(v.close) };
+      });
+      var closes = candles.map(function(c) { return c.close; });
+      var highs = candles.map(function(c) { return c.high; });
+      var lows = candles.map(function(c) { return c.low; });
+      var price = closes[closes.length - 1];
+      var ema50 = calcEMA(closes, 50);
+      var swingHigh = Math.max.apply(null, highs);
+      var swingLow = Math.min.apply(null, lows);
+      var range = swingHigh - swingLow;
+      var aboveEma = price > ema50;
+      var levels = fibLevels.map(function(f) {
+        return { level: f, price: swingHigh - (range * f) };
+      });
+      // Find nearest level to current price
+      var nearest = levels.reduce(function(a, b) {
+        return Math.abs(a.price - price) < Math.abs(b.price - price) ? a : b;
+      });
+      return { pair: pair, price: price, ema50: ema50, aboveEma: aboveEma, levels: levels, nearest: nearest, swingHigh: swingHigh, swingLow: swingLow };
+    }).catch(function() { return { pair: pair, error: true }; });
+  });
+
+  Promise.all(promises).then(function(results) {
+    var html = results.map(function(r) {
+      if (r.error) return '<div class="fib-card"><div class="fib-pair">' + r.pair.symbol + '</div><div style="color:#9b7fc4;font-size:12px">Could not load</div></div>';
+      var emaBadge = r.aboveEma ? '<span class="fib-ema-badge fib-long">&#x2191; LONG bias</span>' : '<span class="fib-ema-badge fib-short">&#x2193; SHORT bias</span>';
+      var levelsHtml = r.levels.map(function(l) {
+        var isAbove = l.price > r.price;
+        var isNearest = l.level === r.nearest.level;
+        var rowClass = (isNearest ? ' nearest' : '') + (isAbove ? ' above-price' : ' below-price');
+        var arrow = isAbove ? '&#x2B06;' : '&#x2B07;';
+        return '<div class="fib-level-row' + rowClass + '">' +
+          '<span class="fib-level-label">' + arrow + ' ' + (l.level * 100).toFixed(1) + '%' + (isNearest ? ' ★' : '') + '</span>' +
+          '<span class="fib-level-price">' + l.price.toFixed(r.pair.decimals) + '</span>' +
+        '</div>';
+      }).join('');
+      return '<div class="fib-card">' +
+        '<div class="fib-pair"><span>' + r.pair.symbol + ' @ ' + r.price.toFixed(r.pair.decimals) + '</span>' + emaBadge + '</div>' +
+        levelsHtml +
+        '<div style="font-size:11px;color:#7050a0;margin-top:6px">Swing: ' + r.swingLow.toFixed(r.pair.decimals) + ' — ' + r.swingHigh.toFixed(r.pair.decimals) + '</div>' +
+      '</div>';
+    }).join('');
+    grid.innerHTML = html;
+  });
+}
+
 function checkEMACrossDashboard() {
   var grid = document.getElementById('emaCrossGrid');
   var pairs = [
@@ -973,7 +1018,6 @@ function loadAll() {
   renderNews();
   checkStopTrading();
   checkFibDashboard();
-  checkEMACrossDashboard();
   loadSignals();
   document.getElementById('lastUpd').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   btn.textContent = '\u21BB Refresh';
