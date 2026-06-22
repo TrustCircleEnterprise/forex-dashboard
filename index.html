@@ -454,9 +454,10 @@ function isEURUSDSession() {
   var now = new Date();
   var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
   var hour = est.getHours();
-  var london = hour >= 3 && hour < 12;
-  var newYork = hour >= 8 && hour < 17;
-  return london || newYork;
+  var day = est.getDay();
+  // Mon-Thu 8AM-10PM EST only
+  if (day < 1 || day > 4) return false;
+  return hour >= 8 && hour < 22;
 }
 
 function isXAUVolatileWindow() {
@@ -950,7 +951,9 @@ function checkDeloreanDashboard() {
         var now = new Date();
         var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
         var h = est.getHours();
-        return (h >= 19 || h < 4) || (h >= 3 && h < 12) || (h >= 8 && h < 17);
+        var dy = est.getDay();
+        if (dy < 1 || dy > 4) return false;
+        return h >= 8 && h < 22;
       })();
 
       var signalReady = !tangled && stackLong || stackShort;
@@ -1121,7 +1124,9 @@ function checkDeloreanDashboard() {
         var now = new Date();
         var est = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
         var h = est.getHours();
-        return (h >= 19 || h < 4) || (h >= 3 && h < 12) || (h >= 8 && h < 17);
+        var dy = est.getDay();
+        if (dy < 1 || dy > 4) return false;
+        return h >= 8 && h < 22;
       })();
 
       var signalReady = !tangled && stackLong || stackShort;
