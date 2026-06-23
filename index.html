@@ -55,6 +55,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .news-ff-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #9b7fc4; text-decoration: none; padding: 6px 12px; border: 1px solid #4a2d7a; border-radius: 8px; background: #180d30; }
 .news-ff-link:hover { border-color: #d4a800; color: #d4a800; }
 /* ALERT BANNER */
+.trade-time-warning { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; background: #221508; border: 1.5px solid #ef9f27; margin-bottom: 1rem; }
+.trade-time-title { font-size: 13px; font-weight: 600; color: #f0b030; }
+.trade-time-sub { font-size: 12px; color: #c87820; margin-top: 2px; }
 .stop-banner { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-radius: 12px; background: #2a0808; border: 2px solid #d85a30; margin-bottom: 1.25rem; animation: flashRed 1.5s infinite; }
 @keyframes flashRed { 0%,100%{border-color:#d85a30} 50%{border-color:#ff2020} }
 .stop-banner-title { font-size: 16px; font-weight: 700; color: #f08060; }
@@ -523,6 +526,36 @@ function renderCard(pair, d, suppressed) {
     '</div>';
 }
 
+function checkOpenTradeTimes() {
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Sheet1';
+  fetch(url).then(function(r) { return r.text(); }).then(function(text) {
+    var json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
+    var rows = json.table.rows;
+    var now = new Date();
+    var oldOpenTrades = [];
+    rows.forEach(function(row) {
+      var c = row.c;
+      var status = (c[9] && c[9].v) ? c[9].v.toString().toUpperCase() : '';
+      var dateVal = (c[0] && c[0].f) ? c[0].f : '';
+      var pair = (c[1] && c[1].v) ? c[1].v : '';
+      if (status === 'OPEN' && dateVal) {
+        var openTime = new Date(dateVal);
+        var hoursOpen = (now - openTime) / (1000 * 60 * 60);
+        if (hoursOpen > 4) oldOpenTrades.push({ pair: pair, hours: hoursOpen.toFixed(1) });
+      }
+    });
+    var existing = document.getElementById('tradeTimeWarning');
+    if (existing) existing.remove();
+    if (oldOpenTrades.length > 0) {
+      var div = document.createElement('div');
+      div.id = 'tradeTimeWarning';
+      div.innerHTML = '<div class="trade-time-warning"><div style="font-size:22px">&#x23F0;</div><div><div class="trade-time-title">' + oldOpenTrades.length + ' trade(s) open over 4 hours &mdash; consider closing</div><div class="trade-time-sub">' + oldOpenTrades.map(function(t) { return t.pair + ' (' + t.hours + 'h)'; }).join(', ') + '</div></div></div>';
+      var stopBanner = document.getElementById('stopBanner');
+      stopBanner.parentNode.insertBefore(div, stopBanner);
+    }
+  }).catch(function() {});
+}
+
 function checkStopTrading() {
   var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Sheet1';
   fetch(url).then(function(r) { return r.text(); }).then(function(text) {
@@ -554,7 +587,8 @@ function checkStopTrading() {
     if (todayLosses >= 2) {
       el.innerHTML = '<div class="stop-banner"><div style="font-size:28px">🛑</div><div><div class="stop-banner-title">STOP TRADING — 2 losses today. Come back tomorrow.</div><div class="stop-banner-sub">You have hit your daily loss limit. Protect your account. No more trades today.</div></div></div>';
     } else if (todayLosses === 1) {
-      el.innerHTML = '<div class="stop-banner" style="border-color:#ef9f27;background:#221508;animation:none"><div style="font-size:24px">⚠️</div><div><div class="stop-banner-title" style="color:#f0b030">1 loss today — 1 more and you must stop.</div><div class="stop-banner-sub" style="color:#c87820">Be selective. Only take A+ setups.</div></div></div>';
+      var pairList = blockedPairs.join(', ');
+      el.innerHTML = '<div class="stop-banner" style="border-color:#ef9f27;background:#221508;animation:none"><div style="font-size:24px">⚠️</div><div><div class="stop-banner-title" style="color:#f0b030">1 loss today on ' + pairList + ' — no more trades on this pair today</div><div class="stop-banner-sub" style="color:#c87820">Switch to a different pair or be very selective.</div></div></div>';
     } else {
       el.innerHTML = '';
     }
@@ -985,7 +1019,7 @@ function checkDeloreanDashboard() {
         '<div class="d-level"><div class="d-level-label">Stop Loss</div><div class="d-level-val sl">' + r.sl.toFixed(dc) + '</div></div>' +
         '<div class="d-level"><div class="d-level-label">Take Profit</div><div class="d-level-val tp">' + r.tp.toFixed(dc) + '</div></div>' +
         '<div class="d-level"><div class="d-level-label">R:R Ratio</div><div class="d-level-val ' + (r.rrOk ? 'rr-good' : 'rr-bad') + '">' + r.rr.toFixed(2) + ' : 1</div></div>' +
-        '<div class="d-level"><div class="d-level-label">Signal</div><div class="d-level-val" style="color:#d4a800">&#x1F697; READY</div></div>' +
+        '<div class="d-level"><div class="d-level-label">Lot Size</div><div class="d-level-val" style="color:#d4a800">0.02 lots</div></div>' +
         '</div>' : '';
 
       return '<div class="delorean-card ' + cardClass + '">' +
@@ -1158,7 +1192,7 @@ function checkDeloreanDashboard() {
         '<div class="d-level"><div class="d-level-label">Stop Loss</div><div class="d-level-val sl">' + r.sl.toFixed(dc) + '</div></div>' +
         '<div class="d-level"><div class="d-level-label">Take Profit</div><div class="d-level-val tp">' + r.tp.toFixed(dc) + '</div></div>' +
         '<div class="d-level"><div class="d-level-label">R:R Ratio</div><div class="d-level-val ' + (r.rrOk ? 'rr-good' : 'rr-bad') + '">' + r.rr.toFixed(2) + ' : 1</div></div>' +
-        '<div class="d-level"><div class="d-level-label">Signal</div><div class="d-level-val" style="color:#d4a800">&#x1F697; READY</div></div>' +
+        '<div class="d-level"><div class="d-level-label">Lot Size</div><div class="d-level-val" style="color:#d4a800">0.02 lots</div></div>' +
         '</div>' : '';
 
       return '<div class="delorean-card ' + cardClass + '">' +
