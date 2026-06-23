@@ -285,9 +285,9 @@ tr:hover td { background: #1a0d32; }
 var WEBHOOK = 'https://script.google.com/macros/s/AKfycbwGScbfS1VY3koSVBaMugpWiiIAlY4aa_WRp9wYrsoQykd2yMZYF1UEs2z8q1YI5lU/exec';
 var API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
 var SHEET_ID = '18C3wbnwUJQYvBw-n0iyOjI07q8-HyFryMuTPXpyQYPc';
-var ACCOUNT_SIZE = 4899.82;
-var RISK_PER_TRADE = 50;
-var DAILY_GOAL = 25;
+var ACCOUNT_SIZE = 1000;
+var RISK_PER_TRADE = 10;
+var DAILY_GOAL = 5;
 var DAILY_LOSS_LIMIT = 2;
 var PAIRS = [
   { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
@@ -757,7 +757,7 @@ function loadPnl() {
       '</div>';
 
     // PROP FIRM TRACKER
-    var challengeStart = new Date('2026-05-31');
+    var challengeStart = new Date('2026-06-22');
     var now = new Date();
     var daysSinceStart = Math.floor((now - challengeStart) / (1000 * 60 * 60 * 24));
     var daysRemaining = Math.max(0, 30 - daysSinceStart);
@@ -765,7 +765,7 @@ function loadPnl() {
     deadline.setDate(deadline.getDate() + 30);
     var deadlineStr = deadline.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-    // Count qualifying days (days with P&L >= $25)
+    // Count qualifying days (days with P&L >= $5)
     var dailyPnl = {};
     allTrades.forEach(function(t) {
       var d = t.date ? t.date.split(' ')[0] : '';
@@ -773,16 +773,16 @@ function loadPnl() {
       if (!dailyPnl[d]) dailyPnl[d] = 0;
       dailyPnl[d] += t.pnl;
     });
-    var qualifyingDays = Object.keys(dailyPnl).filter(function(d) { return dailyPnl[d] >= 25; }).length;
+    var qualifyingDays = Object.keys(dailyPnl).filter(function(d) { return dailyPnl[d] >= 5; }).length;
     var daysNeeded = Math.max(0, 7 - qualifyingDays);
 
     var maxLossUsed = Math.abs(Math.min(0, totalPnl));
-    var maxLossRemaining = Math.max(0, 350 - maxLossUsed);
+    var maxLossRemaining = Math.max(0, 70 - maxLossUsed);
     var dailyLossUsed = Math.abs(Math.min(0, todayPnl));
-    var dailyLossRemaining = Math.max(0, 250 - dailyLossUsed);
+    var dailyLossRemaining = Math.max(0, 50 - dailyLossUsed);
 
-    var maxLossPct = Math.min(100, (maxLossUsed / 350) * 100);
-    var dailyLossPct = Math.min(100, (dailyLossUsed / 250) * 100);
+    var maxLossPct = Math.min(100, (maxLossUsed / 70) * 100);
+    var dailyLossPct = Math.min(100, (dailyLossUsed / 50) * 100);
     var daysPct = Math.min(100, (qualifyingDays / 7) * 100);
 
     var maxLossClass = maxLossPct > 75 ? 'danger' : maxLossPct > 50 ? 'warn' : 'good';
@@ -791,8 +791,8 @@ function loadPnl() {
     var barDailyClass = dailyLossPct > 75 ? 'danger' : dailyLossPct > 50 ? 'warn' : '';
 
     var breachWarning = '';
-    if (maxLossRemaining < 50) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $50 remaining before max loss breach! Stop trading immediately.</div>';
-    if (dailyLossRemaining < 50) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $50 remaining before daily loss breach! Stop trading today.</div>';
+    if (maxLossRemaining < 15) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $15 remaining before max loss breach! Stop trading immediately.</div>';
+    if (dailyLossRemaining < 15) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $15 remaining before daily loss breach! Stop trading today.</div>';
 
     var propHtml = '<div class="prop-section">' +
       '<div class="prop-title">&#x1F3C6; Alpha Funded Challenge Tracker</div>' +
@@ -812,13 +812,13 @@ function loadPnl() {
         '<div class="prop-card ' + maxLossClass + '">' +
           '<div class="prop-label">Max loss left</div>' +
           '<div class="prop-value" style="color:' + (maxLossClass === 'danger' ? '#f08060' : maxLossClass === 'warn' ? '#f0b030' : '#4cd9a0') + '">$' + maxLossRemaining.toFixed(2) + '</div>' +
-          '<div class="prop-sub">$' + maxLossUsed.toFixed(2) + ' used of $350</div>' +
+          '<div class="prop-sub">$' + maxLossUsed.toFixed(2) + ' used of $70</div>' +
           '<div class="prop-bar-wrap"><div class="prop-bar ' + barMaxClass + '" style="width:' + maxLossPct + '%"></div></div>' +
         '</div>' +
         '<div class="prop-card ' + dailyLossClass + '">' +
           '<div class="prop-label">Daily loss left</div>' +
           '<div class="prop-value" style="color:' + (dailyLossClass === 'danger' ? '#f08060' : dailyLossClass === 'warn' ? '#f0b030' : '#4cd9a0') + '">$' + dailyLossRemaining.toFixed(2) + '</div>' +
-          '<div class="prop-sub">$' + dailyLossUsed.toFixed(2) + ' used of $250</div>' +
+          '<div class="prop-sub">$' + dailyLossUsed.toFixed(2) + ' used of $50</div>' +
           '<div class="prop-bar-wrap"><div class="prop-bar ' + barDailyClass + '" style="width:' + dailyLossPct + '%"></div></div>' +
         '</div>' +
       '</div>' +
