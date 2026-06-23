@@ -288,7 +288,7 @@ var DAILY_GOAL = 25;
 var DAILY_LOSS_LIMIT = 2;
 var PAIRS = [
   { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
-  { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 }
+  { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 }
 ];
 var sentCache = {};
 
@@ -585,7 +585,7 @@ function loadSignals() {
 
   Promise.all(promises).then(function(results) {
     var alertPromises = results.map(function(r) {
-      var pairBlocked = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile) || (r.pair.name === 'EURUSD' && !eurSession);
+      var pairBlocked = suppressed || (r.pair.name === 'EURUSD' && !eurSession);
       if (!r.error && r.data.score === 4 && r.data.rr >= 1.5 && !pairBlocked) {
         return fireWebhook(r.pair.name, { direction: r.data.dir, price: r.data.price, sl: r.data.sl, tp: r.data.tp, rr: r.data.rr, score: r.data.score }).then(function(sent) {
           return sent ? { pair: r.pair.symbol, direction: r.data.dir } : null;
@@ -598,7 +598,7 @@ function loadSignals() {
       var alerts = alertResults.filter(function(a) { return a !== null; });
       renderBanner(alerts);
       var html = results.map(function(r) {
-        var pairSuppressed = suppressed || (r.pair.name === 'XAUUSD' && xauVolatile) || (r.pair.name === 'EURUSD' && !eurSession);
+        var pairSuppressed = suppressed || (r.pair.name === 'EURUSD' && !eurSession);
       if (!r.error) r.data.eurSession = (r.pair.name === 'EURUSD') ? eurSession : true;
         return r.error ? '<div class="pair-card"><div class="loading-state">Could not load ' + r.pair.symbol + '</div></div>' : renderCard(r.pair, r.data, pairSuppressed);
       }).join('');
@@ -896,7 +896,7 @@ function checkDeloreanDashboard() {
   var grid = document.getElementById('deloreanGrid');
   var pairs = [
     { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
-    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 },
     { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
   ];
 
@@ -1009,7 +1009,7 @@ function checkFibDashboard() {
   var grid = document.getElementById('fibGrid');
   var pairs = [
     { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
-    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 },
     { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
   ];
   var fibLevels = [0.236, 0.382, 0.5, 0.618, 0.786];
@@ -1069,7 +1069,7 @@ function checkDeloreanDashboard() {
   var grid = document.getElementById('deloreanGrid');
   var pairs = [
     { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
-    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 },
     { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
   ];
 
@@ -1182,7 +1182,7 @@ function checkFibDashboard() {
   var grid = document.getElementById('fibGrid');
   var pairs = [
     { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
-    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 },
+    { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 },
     { symbol: 'EUR/AUD', name: 'EURAUD', decimals: 5 }
   ];
   var fibLevels = [0.236, 0.382, 0.5, 0.618, 0.786];
@@ -1242,7 +1242,7 @@ function checkEMACrossDashboard() {
   var grid = document.getElementById('emaCrossGrid');
   var pairs = [
     { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
-    { symbol: 'XAU/USD', name: 'XAUUSD', decimals: 2 }
+    { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 }
   ];
   var promises = pairs.map(function(pair) {
     return fetchCandles(pair.symbol).then(function(candles) {
