@@ -289,6 +289,7 @@ var ACCOUNT_SIZE = 1000;
 var RISK_PER_TRADE = 10;
 var DAILY_GOAL = 5;
 var DAILY_LOSS_LIMIT = 2;
+var CHALLENGE_START = '2026-06-30';  // new account start — trades before this date are ignored
 var PAIRS = [
   { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
   { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 }
@@ -709,6 +710,7 @@ function loadPnl() {
     dayStart.setHours(resetH, 0, 0, 0);
     var dayEnd = new Date(dayStart);
     dayEnd.setDate(dayEnd.getDate() + 1);
+    var challengeCutoff = new Date(CHALLENGE_START);
 
     var todayTrades = [], allTrades = [];
 
@@ -717,12 +719,12 @@ function loadPnl() {
       var status = (c[9] && c[9].v) ? c[9].v.toString().toUpperCase() : '';
       var pnl = (c[10] && c[10].v !== null) ? parseFloat(c[10].v) : 0;
       var dateStr = (c[0] && c[0].f) ? c[0].f : (c[0] && c[0].v) ? c[0].v.toString() : '';
+      if (!dateStr) return;
+      var tradeDate = new Date(dateStr);
+      if (isNaN(tradeDate.getTime()) || tradeDate < challengeCutoff) return;  // ignore old-account trades
       allTrades.push({ status: status, pnl: pnl, date: dateStr });
-      if (dateStr) {
-        var tradeDate = new Date(dateStr);
-        if (tradeDate >= dayStart && tradeDate < dayEnd) {
-          todayTrades.push({ status: status, pnl: pnl });
-        }
+      if (tradeDate >= dayStart && tradeDate < dayEnd) {
+        todayTrades.push({ status: status, pnl: pnl });
       }
     });
 
@@ -757,7 +759,7 @@ function loadPnl() {
       '</div>';
 
     // PROP FIRM TRACKER
-    var challengeStart = new Date('2026-06-30');
+    var challengeStart = new Date(CHALLENGE_START);
     var now = new Date();
     var daysSinceStart = Math.floor((now - challengeStart) / (1000 * 60 * 60 * 24));
     var daysRemaining = Math.max(0, 30 - daysSinceStart);
