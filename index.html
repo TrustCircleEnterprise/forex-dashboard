@@ -285,11 +285,10 @@ tr:hover td { background: #1a0d32; }
 var WEBHOOK = 'https://script.google.com/macros/s/AKfycbwGScbfS1VY3koSVBaMugpWiiIAlY4aa_WRp9wYrsoQykd2yMZYF1UEs2z8q1YI5lU/exec';
 var API_KEY = '6609b2a381b14d95b39955a7fbb439cf';
 var SHEET_ID = '18C3wbnwUJQYvBw-n0iyOjI07q8-HyFryMuTPXpyQYPc';
-var ACCOUNT_SIZE = 1000;
-var RISK_PER_TRADE = 10;
-var DAILY_GOAL = 5;
+var ACCOUNT_SIZE = 4899.82;
+var RISK_PER_TRADE = 50;
+var DAILY_GOAL = 25;
 var DAILY_LOSS_LIMIT = 2;
-var CHALLENGE_START = '2026-06-30';  // new account start — trades before this date are ignored
 var PAIRS = [
   { symbol: 'EUR/USD', name: 'EURUSD', decimals: 5 },
   { symbol: 'GBP/USD', name: 'GBPUSD', decimals: 5 }
@@ -416,7 +415,7 @@ function getScore(price, e20, e50, sup, res, dir) {
   if (dir !== 'FLAT') s++;
   if (dir === 'LONG' && price > e20) s++;
   if (dir === 'SHORT' && price < e20) s++;
-  var prox = (res - sup) * 0.015;
+  var prox = (res - sup) * 0.02;
   if (s >= 2) {
     if (dir === 'LONG' && Math.abs(price - sup) < prox) s++;
     if (dir === 'SHORT' && Math.abs(price - res) < prox) s++;
@@ -482,7 +481,7 @@ function ruleItem(pass, text) {
 }
 
 function renderCard(pair, d, suppressed) {
-  var price = d.price, e20 = d.ema20, e50 = d.ema50, sup = d.sup, res = d.res, dir = d.dir, score = d.score, sl = d.sl, tp = d.tp, rr = d.rr;
+  var price = d.price, dir = d.dir, score = d.score, sl = d.sl, tp = d.tp, rr = d.rr;
   var dc = pair.decimals;
   var isReady = score >= 3 && rr >= 1.5 && !suppressed;
   var isForming = score >= 2 && !isReady;
@@ -494,12 +493,10 @@ function renderCard(pair, d, suppressed) {
   var crossLabel = dir === 'LONG' ? '&#x2191; above' : dir === 'SHORT' ? '&#x2193; below' : '&mdash; flat';
   var crossDesc = dir === 'LONG' ? '20 EMA above 50 EMA &mdash; bullish momentum' : dir === 'SHORT' ? '20 EMA below 50 EMA &mdash; bearish momentum' : 'EMAs are flat &mdash; no directional bias';
   var rrClass = rr >= 1.5 ? 'rr-good' : rr >= 1.0 ? 'rr-warn' : 'rr-bad';
-  var r2 = (dir === 'LONG' && price > e20) || (dir === 'SHORT' && price < e20);
-  var r3 = dir !== 'FLAT' && r2 && Math.abs(price - (dir === 'LONG' ? sup : res)) < (res - sup) * 0.015;
+
   var dots = '';
   for (var i = 1; i <= 4; i++) dots += '<div class="sdot ' + (score >= i ? (score === 4 ? 'f4' : 'f3') : '') + '"></div>';
-  var distSup = (((price - sup) / price) * 100).toFixed(2);
-  var distRes = (((res - price) / price) * 100).toFixed(2);
+
   var dirArrow = dir === 'LONG' ? '&#x2191;' : dir === 'SHORT' ? '&#x2193;' : '&mdash;';
 
   return '<div class="pair-card ' + cardClass + '">' +
@@ -507,18 +504,18 @@ function renderCard(pair, d, suppressed) {
     '<div><div class="price-val">' + price.toFixed(dc) + '</div><div><span class="dir-badge ' + dirClass + '">' + dirArrow + ' ' + dir + '</span></div></div></div>' +
     '<div class="status-strip ' + stripClass + '">' + stripText + '</div>' +
     '<div class="section-label">EMA levels</div>' +
-    '<div class="ema-rows"><div class="ema-row"><span class="ema-left"><span class="ema-dot dot-20"></span>20 EMA</span><span class="ema-val">' + e20.toFixed(dc) + '</span></div>' +
-    '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-50"></span>50 EMA</span><span class="ema-val">' + e50.toFixed(dc) + '</span></div></div>' +
-    '<div class="crossover-box"><div class="crossover-row"><span class="ema-pill p20">20 EMA</span><span style="color:#7050a0;margin:0 4px">&rarr;</span><span class="ema-pill p50">50 EMA</span><span class="cross-signal ' + crossClass + '" style="margin-left:6px">' + crossLabel + '</span></div><div class="cross-desc">' + crossDesc + '</div></div>' +
-    '<div class="section-label">Support &amp; resistance</div>' +
-    '<div class="sr-rows"><div class="sr-row"><span class="sr-left"><span class="sr-dot-sup"></span>Support</span><span class="sr-val">' + sup.toFixed(dc) + '<span class="sr-dist">' + distSup + '% away</span></span></div>' +
-    '<div class="sr-row"><span class="sr-left"><span class="sr-dot-res"></span>Resistance</span><span class="sr-val">' + res.toFixed(dc) + '<span class="sr-dist">' + distRes + '% away</span></span></div>' +
-    '<div class="sr-row"><span class="sr-left">&#x2193; Stop loss</span><span class="sr-val">' + sl.toFixed(dc) + '</span></div>' +
-    '<div class="sr-row"><span class="sr-left">&#x2191; Take profit</span><span class="sr-val">' + tp.toFixed(dc) + '</span></div></div>' +
+    '<div class="ema-rows"><div class="ema-row"><span class="ema-left"><span class="ema-dot dot-20"></span>5 EMA (trend)</span><span class="ema-val">' + d.ema5.toFixed(dc) + '</span></div>' +
+    '<div class="ema-row"><span class="ema-left"><span class="ema-dot dot-50"></span>13 EMA (pullback)</span><span class="ema-val">' + d.ema13.toFixed(dc) + '</span></div>' +
+    '<div class="ema-row"><span class="ema-left"><span class="ema-dot" style="background:#f08060"></span>50 EMA (filter)</span><span class="ema-val">' + d.ema50.toFixed(dc) + '</span></div></div>' +
+    '<div class="crossover-box"><div class="crossover-row"><span class="ema-pill p20">5 EMA</span><span style="color:#7050a0;margin:0 4px">&rarr;</span><span class="ema-pill p50">50 EMA</span><span class="cross-signal ' + crossClass + '" style="margin-left:6px">' + crossLabel + '</span></div><div class="cross-desc">' + (dir === 'LONG' ? '5 EMA above 50 EMA — uptrend' : dir === 'SHORT' ? '5 EMA below 50 EMA — downtrend' : 'EMAs flat — no trend') + '</div></div>' +
+    '<div class="section-label">Trade Levels</div>' +
+    '<div class="sr-rows"><div class="sr-row"><span class="sr-left">&#x2193; Stop loss</span><span class="sr-val">' + sl.toFixed(dc) + '</span></div>' +
+    '<div class="sr-row"><span class="sr-left">&#x2191; Take profit</span><span class="sr-val">' + tp.toFixed(dc) + '</span></div>' +
+    '<div class="sr-row"><span class="sr-left">&#x1F4CD; 13 EMA distance</span><span class="sr-val">' + (d.distFromEma13 * 100).toFixed(3) + '%</span></div></div>' +
     '<div class="rule-list">' +
-    ruleItem(dir !== "FLAT", "Rule 1 — EMA alignment (" + (dir !== "FLAT" ? dir : "no direction") + ")") +
-    ruleItem(r2, "Rule 2 — Price " + (dir === "LONG" ? "above" : "below") + " 20 EMA") +
-    ruleItem(r3, "Rule 3 — Near " + (dir === "LONG" ? "support" : "resistance")) +
+    ruleItem(dir !== "FLAT", "Rule 1 — Trend confirmed (" + (dir !== "FLAT" ? dir : "no trend") + ")") +
+    ruleItem(d.touched13, "Rule 2 — Price touched 13 EMA") +
+    ruleItem(d.correctSide, "Rule 3 — Price " + (dir === "LONG" ? "above" : "below") + " 13 EMA") +
     ruleItem(rr >= 1.5, "Rule 4 — R:R min 1.5 (now: " + rr.toFixed(2) + ")") +
     '</div>' +
     '<div class="card-footer"><div><div class="section-label" style="margin:0">Confluence ' + score + '/4</div><div class="score-dots">' + dots + '</div></div>' +
@@ -601,16 +598,38 @@ function loadSignals() {
     return fetchCandles(pair.symbol).then(function(candles) {
       if (!candles || candles.length < 60) return { pair: pair, error: true };
       var closes = candles.map(function(c) { return c.close; });
+      var highs = candles.map(function(c) { return c.high; });
+      var lows = candles.map(function(c) { return c.low; });
       var price = closes[closes.length - 1];
-      var ema20 = calcEMA(closes, 20), ema50 = calcEMA(closes, 50);
-      var sr = autoSR(candles);
-      var dir = getDir(ema20, ema50);
-      var score = getScore(price, ema20, ema50, sr.sup, sr.res, dir);
-      var sl = dir === 'LONG' ? sr.sup * 0.999 : sr.res * 1.001;
-      var tp = dir === 'LONG' ? sr.res * 0.999 : sr.sup * 1.001;
-      var risk = Math.abs(price - sl), reward = Math.abs(tp - price);
-      var rr = risk > 0 ? reward / risk : 0;
-      return { pair: pair, data: { price: price, ema20: ema20, ema50: ema50, sup: sr.sup, res: sr.res, dir: dir, score: score, sl: sl, tp: tp, rr: rr } };
+      var ema5 = calcEMA(closes, 5);
+      var ema13 = calcEMA(closes, 13);
+      var ema50 = calcEMA(closes, 50);
+      var uptrend = ema5 > ema50;
+      var downtrend = ema5 < ema50;
+      var dir = uptrend ? 'LONG' : downtrend ? 'SHORT' : 'FLAT';
+      var distFromEma13 = Math.abs(price - ema13) / price;
+      var touched13 = distFromEma13 < 0.001;
+      var correctSide = (dir === 'LONG' && price >= ema13) || (dir === 'SHORT' && price <= ema13);
+      var swingHigh = Math.max.apply(null, highs.slice(-10));
+      var swingLow = Math.min.apply(null, lows.slice(-10));
+      var sl, tp, rr;
+      if (dir === 'LONG') {
+        sl = swingLow - (price * 0.0002);
+        tp = price + (1.5 * (price - sl));
+        var risk1 = price - sl, reward1 = tp - price;
+        rr = risk1 > 0 ? reward1 / risk1 : 0;
+      } else if (dir === 'SHORT') {
+        sl = swingHigh + (price * 0.0002);
+        tp = price - (1.5 * (sl - price));
+        var risk2 = sl - price, reward2 = price - tp;
+        rr = risk2 > 0 ? reward2 / risk2 : 0;
+      } else { sl = 0; tp = 0; rr = 0; }
+      var score = 0;
+      if (dir !== 'FLAT') score++;
+      if (touched13) score++;
+      if (correctSide) score++;
+      if (rr >= 1.5) score++;
+      return { pair: pair, data: { price: price, ema5: ema5, ema13: ema13, ema50: ema50, dir: dir, score: score, sl: sl, tp: tp, rr: rr, touched13: touched13, correctSide: correctSide, distFromEma13: distFromEma13 } };
     });
   });
 
@@ -710,7 +729,6 @@ function loadPnl() {
     dayStart.setHours(resetH, 0, 0, 0);
     var dayEnd = new Date(dayStart);
     dayEnd.setDate(dayEnd.getDate() + 1);
-    var challengeCutoff = new Date(CHALLENGE_START);
 
     var todayTrades = [], allTrades = [];
 
@@ -719,12 +737,12 @@ function loadPnl() {
       var status = (c[9] && c[9].v) ? c[9].v.toString().toUpperCase() : '';
       var pnl = (c[10] && c[10].v !== null) ? parseFloat(c[10].v) : 0;
       var dateStr = (c[0] && c[0].f) ? c[0].f : (c[0] && c[0].v) ? c[0].v.toString() : '';
-      if (!dateStr) return;
-      var tradeDate = new Date(dateStr);
-      if (isNaN(tradeDate.getTime()) || tradeDate < challengeCutoff) return;  // ignore old-account trades
       allTrades.push({ status: status, pnl: pnl, date: dateStr });
-      if (tradeDate >= dayStart && tradeDate < dayEnd) {
-        todayTrades.push({ status: status, pnl: pnl });
+      if (dateStr) {
+        var tradeDate = new Date(dateStr);
+        if (tradeDate >= dayStart && tradeDate < dayEnd) {
+          todayTrades.push({ status: status, pnl: pnl });
+        }
       }
     });
 
@@ -759,7 +777,7 @@ function loadPnl() {
       '</div>';
 
     // PROP FIRM TRACKER
-    var challengeStart = new Date(CHALLENGE_START);
+    var challengeStart = new Date('2026-05-31');
     var now = new Date();
     var daysSinceStart = Math.floor((now - challengeStart) / (1000 * 60 * 60 * 24));
     var daysRemaining = Math.max(0, 30 - daysSinceStart);
@@ -767,7 +785,7 @@ function loadPnl() {
     deadline.setDate(deadline.getDate() + 30);
     var deadlineStr = deadline.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-    // Count qualifying days (days with P&L >= $5)
+    // Count qualifying days (days with P&L >= $25)
     var dailyPnl = {};
     allTrades.forEach(function(t) {
       var d = t.date ? t.date.split(' ')[0] : '';
@@ -775,16 +793,16 @@ function loadPnl() {
       if (!dailyPnl[d]) dailyPnl[d] = 0;
       dailyPnl[d] += t.pnl;
     });
-    var qualifyingDays = Object.keys(dailyPnl).filter(function(d) { return dailyPnl[d] >= 5; }).length;
+    var qualifyingDays = Object.keys(dailyPnl).filter(function(d) { return dailyPnl[d] >= 25; }).length;
     var daysNeeded = Math.max(0, 7 - qualifyingDays);
 
     var maxLossUsed = Math.abs(Math.min(0, totalPnl));
-    var maxLossRemaining = Math.max(0, 70 - maxLossUsed);
+    var maxLossRemaining = Math.max(0, 350 - maxLossUsed);
     var dailyLossUsed = Math.abs(Math.min(0, todayPnl));
-    var dailyLossRemaining = Math.max(0, 50 - dailyLossUsed);
+    var dailyLossRemaining = Math.max(0, 250 - dailyLossUsed);
 
-    var maxLossPct = Math.min(100, (maxLossUsed / 70) * 100);
-    var dailyLossPct = Math.min(100, (dailyLossUsed / 50) * 100);
+    var maxLossPct = Math.min(100, (maxLossUsed / 350) * 100);
+    var dailyLossPct = Math.min(100, (dailyLossUsed / 250) * 100);
     var daysPct = Math.min(100, (qualifyingDays / 7) * 100);
 
     var maxLossClass = maxLossPct > 75 ? 'danger' : maxLossPct > 50 ? 'warn' : 'good';
@@ -793,8 +811,8 @@ function loadPnl() {
     var barDailyClass = dailyLossPct > 75 ? 'danger' : dailyLossPct > 50 ? 'warn' : '';
 
     var breachWarning = '';
-    if (maxLossRemaining < 15) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $15 remaining before max loss breach! Stop trading immediately.</div>';
-    if (dailyLossRemaining < 15) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $15 remaining before daily loss breach! Stop trading today.</div>';
+    if (maxLossRemaining < 50) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $50 remaining before max loss breach! Stop trading immediately.</div>';
+    if (dailyLossRemaining < 50) breachWarning += '<div class="prop-breach">🚨 WARNING — Less than $50 remaining before daily loss breach! Stop trading today.</div>';
 
     var propHtml = '<div class="prop-section">' +
       '<div class="prop-title">&#x1F3C6; Alpha Funded Challenge Tracker</div>' +
@@ -814,13 +832,13 @@ function loadPnl() {
         '<div class="prop-card ' + maxLossClass + '">' +
           '<div class="prop-label">Max loss left</div>' +
           '<div class="prop-value" style="color:' + (maxLossClass === 'danger' ? '#f08060' : maxLossClass === 'warn' ? '#f0b030' : '#4cd9a0') + '">$' + maxLossRemaining.toFixed(2) + '</div>' +
-          '<div class="prop-sub">$' + maxLossUsed.toFixed(2) + ' used of $70</div>' +
+          '<div class="prop-sub">$' + maxLossUsed.toFixed(2) + ' used of $350</div>' +
           '<div class="prop-bar-wrap"><div class="prop-bar ' + barMaxClass + '" style="width:' + maxLossPct + '%"></div></div>' +
         '</div>' +
         '<div class="prop-card ' + dailyLossClass + '">' +
           '<div class="prop-label">Daily loss left</div>' +
           '<div class="prop-value" style="color:' + (dailyLossClass === 'danger' ? '#f08060' : dailyLossClass === 'warn' ? '#f0b030' : '#4cd9a0') + '">$' + dailyLossRemaining.toFixed(2) + '</div>' +
-          '<div class="prop-sub">$' + dailyLossUsed.toFixed(2) + ' used of $50</div>' +
+          '<div class="prop-sub">$' + dailyLossUsed.toFixed(2) + ' used of $250</div>' +
           '<div class="prop-bar-wrap"><div class="prop-bar ' + barDailyClass + '" style="width:' + dailyLossPct + '%"></div></div>' +
         '</div>' +
       '</div>' +
@@ -868,8 +886,7 @@ function renderStockCard(stock, d) {
   var changeStr = (change >= 0 ? '+' : '') + change.toFixed(2) + ' (' + (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%)';
   var dots = '';
   for (var i = 1; i <= 4; i++) dots += '<div class="sdot ' + (score >= i ? (score === 4 ? 'f4' : 'f3') : '') + '"></div>';
-  var distSup = (((price - sup) / price) * 100).toFixed(2);
-  var distRes = (((res - price) / price) * 100).toFixed(2);
+
   var r2 = (dir === 'LONG' && price > ema20) || (dir === 'SHORT' && price < ema20);
   var r3 = dir !== 'FLAT' && r2 && Math.abs(price - (dir === 'LONG' ? sup : res)) < (res - sup) * 0.015;
   var dirArrow = dir === 'LONG' ? '&#x2191;' : dir === 'SHORT' ? '&#x2193;' : '&mdash;';
@@ -886,9 +903,9 @@ function renderStockCard(stock, d) {
     '<div class="sr-rows"><div class="sr-row"><span class="sr-left"><span class="sr-dot-sup"></span>Support</span><span class="sr-val">$' + sup.toFixed(dc) + '<span class="sr-dist">' + distSup + '% away</span></span></div>' +
     '<div class="sr-row"><span class="sr-left"><span class="sr-dot-res"></span>Resistance</span><span class="sr-val">$' + res.toFixed(dc) + '<span class="sr-dist">' + distRes + '% away</span></span></div></div>' +
     '<div class="rule-list">' +
-    ruleItem(dir !== "FLAT", "Rule 1 — EMA alignment (" + (dir !== "FLAT" ? dir : "no direction") + ")") +
-    ruleItem(r2, "Rule 2 — Price " + (dir === "LONG" ? "above" : "below") + " 20 EMA") +
-    ruleItem(r3, "Rule 3 — Near " + (dir === "LONG" ? "support" : "resistance")) +
+    ruleItem(dir !== "FLAT", "Rule 1 — Trend confirmed (" + (dir !== "FLAT" ? dir : "no trend") + ")") +
+    ruleItem(d.touched13, "Rule 2 — Price touched 13 EMA") +
+    ruleItem(d.correctSide, "Rule 3 — Price " + (dir === "LONG" ? "above" : "below") + " 13 EMA") +
     ruleItem(rr >= 1.5, "Rule 4 — R:R min 1.5 (now: " + rr.toFixed(2) + ")") +
     '</div>' +
     '<div class="card-footer"><div><div class="section-label" style="margin:0">Confluence ' + score + '/4</div><div class="score-dots">' + dots + '</div></div>' +
