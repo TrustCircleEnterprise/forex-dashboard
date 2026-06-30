@@ -777,12 +777,9 @@ function loadPnl() {
       '</div>';
 
     // PROP FIRM TRACKER
-    var challengeStart = new Date('2026-05-31');
+    var deadline = new Date('2026-08-25');
     var now = new Date();
-    var daysSinceStart = Math.floor((now - challengeStart) / (1000 * 60 * 60 * 24));
-    var daysRemaining = Math.max(0, 30 - daysSinceStart);
-    var deadline = new Date(challengeStart);
-    deadline.setDate(deadline.getDate() + 30);
+    var daysRemaining = Math.max(0, Math.ceil((deadline - now) / (1000 * 60 * 60 * 24)));
     var deadlineStr = deadline.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
     // Count qualifying days (days with P&L >= $25)
